@@ -1,0 +1,517 @@
+<div class="equipment-section">
+  <div class="equipment-header">
+    <h3>Equipment & Items</h3>
+    <div class="equipment-controls">
+      <a class="item-control item-create" title="Create weapon" data-type="weapon">
+        <i class="fas fa-sword"></i> Add Weapon
+      </a>
+      <!-- Future: Add other item types -->
+    </div>
+  </div>
+
+  <!-- Weapons Section -->
+  {{#if weapons}}
+  <div class="equipment-category">
+    <div class="category-header">
+      <h4><i class="fas fa-sword"></i> Weapons</h4>
+      <span class="item-count">({{weapons.length}})</span>
+    </div>
+    
+    <div class="weapons-list">
+      {{#each weapons as |weapon index|}}
+      <div class="weapon-item equipment-item" data-item-id="{{weapon._id}}">
+        <div class="item-header">
+          <div class="item-info">
+            <img class="item-image" src="{{weapon.img}}" title="{{weapon.name}}" width="32" height="32"/>
+            <div class="item-details">
+              <h5 class="item-name">{{weapon.name}}</h5>
+              <div class="item-type">
+                <span class="type-badge {{weapon.system.subtype}}">
+                  {{#ifCond weapon.system.subtype "==" "melee"}}
+                    <i class="fas fa-sword"></i> Melee
+                  {{else}}
+                    <i class="fas fa-bullseye"></i> Ranged
+                  {{/ifCond}}
+                </span>
+                {{#if weapon.system.traits}}
+                <span class="traits-list">{{join weapon.system.traits ', '}}</span>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          
+          <div class="item-actions">
+            <button class="weapon-action-btn attack" 
+                    data-weapon-id="{{weapon._id}}" 
+                    data-action="attack"
+                    title="Attack">
+              <i class="fas fa-sword"></i>
+            </button>
+            <button class="weapon-action-btn parry" 
+                    data-weapon-id="{{weapon._id}}" 
+                    data-action="parry"
+                    title="Parry">
+              <i class="fas fa-shield-alt"></i>
+            </button>
+            <button class="weapon-action-btn dodge" 
+                    data-weapon-id="{{weapon._id}}" 
+                    data-action="dodge"
+                    title="Dodge">
+              <i class="fas fa-running"></i>
+            </button>
+          </div>
+
+          <div class="item-controls">
+            <a class="item-control item-edit" title="Edit Weapon">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a class="item-control item-delete" title="Delete Weapon">
+              <i class="fas fa-trash"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="item-stats">
+          <div class="item-damage">
+            <strong>Damage:</strong> 
+            {{weapon.system.damage.main.formula}} {{weapon.system.damage.main.type}}
+            {{#if weapon.system.damage.alt.formula}}
+              + {{weapon.system.damage.alt.formula}} {{weapon.system.damage.alt.type}}
+            {{/if}}
+          </div>
+          
+          <div class="item-dice-pools">
+            <div class="dice-pool attack-pool">
+              <label>Attack:</label>
+              <span>
+                {{#if weapon.system.attack.skill}}{{weapon.system.attack.skill}}{{else}}No Skill{{/if}}
+                {{#if weapon.system.attack.stat}} + {{weapon.system.attack.stat}}{{/if}}
+                {{#if weapon.system.attack.dicebonus}} (+{{weapon.system.attack.dicebonus}}d){{/if}}
+                {{#if weapon.system.attack.edbonus}} (+{{weapon.system.attack.edbonus}}e){{/if}}
+                {{#if weapon.system.attack.mdbonus}} (+{{weapon.system.attack.mdbonus}}m){{/if}}
+              </span>
+            </div>
+          </div>
+
+          {{#ifCond weapon.system.subtype "==" "ranged"}}
+          {{#if weapon.system.ammunition.type}}
+          <div class="item-ammo">
+            <label>{{weapon.system.ammunition.type}}:</label>
+            <div class="ammo-counter">
+              <input type="number" 
+                     name="systems.weapons.{{weapon._id}}.ammunition.current" 
+                     value="{{weapon.system.ammunition.current}}" 
+                     min="0" 
+                     max="{{weapon.system.ammunition.max}}"
+                     class="ammo-input"/>
+              <span>/{{weapon.system.ammunition.max}}</span>
+            </div>
+          </div>
+          {{/if}}
+          {{/ifCond}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <!-- Armor Section (Placeholder) -->
+  <div class="equipment-category">
+    <div class="category-header">
+      <h4><i class="fas fa-shield-alt"></i> Armor</h4>
+      <span class="item-count">(0)</span>
+    </div>
+    <div class="placeholder-section">
+      <p><em>Armor system to be implemented</em></p>
+      <small>Will include body armor, helmets, shields, etc.</small>
+    </div>
+  </div>
+
+  <!-- Gear Section (Placeholder) -->
+  <div class="equipment-category">
+    <div class="category-header">
+      <h4><i class="fas fa-toolbox"></i> Gear & Items</h4>
+      <span class="item-count">(0)</span>
+    </div>
+    <div class="placeholder-section">
+      <p><em>General equipment system to be implemented</em></p>
+      <small>Will include tools, consumables, magical items, etc.</small>
+    </div>
+  </div>
+
+  {{#unless weapons}}
+  <div class="no-equipment">
+    <div class="empty-state">
+      <i class="fas fa-box-open fa-3x"></i>
+      <h4>No Equipment</h4>
+      <p>This character has no equipment yet.</p>
+      <p>Start by adding weapons using the buttons above.</p>
+    </div>
+  </div>
+  {{/unless}}
+
+</div>
+
+<style>
+.equipment-section {
+  padding: 15px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.equipment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #8b0000;
+}
+
+.equipment-header h3 {
+  margin: 0;
+  color: #8b0000;
+  font-family: 'New Rocker', cursive;
+}
+
+.equipment-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.equipment-controls a {
+  background: #8b0000;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 12px;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.equipment-controls a:hover {
+  background: #5a0000;
+}
+
+.equipment-category {
+  margin-bottom: 25px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: rgba(245,245,245,0.3);
+  overflow: hidden;
+}
+
+.category-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-header h4 {
+  margin: 0;
+  color: #333;
+  font-family: 'New Rocker', cursive;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.item-count {
+  background: #8b0000;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.weapons-list {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.equipment-item {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  background: rgba(255,255,255,0.9);
+  transition: all 0.2s ease;
+}
+
+.equipment-item:hover {
+  background: rgba(245,245,245,0.9);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.item-image {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  flex-shrink: 0;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-name {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.item-type {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.type-badge {
+  background: #607d8b;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.type-badge.melee {
+  background: #8b0000;
+}
+
+.type-badge.ranged {
+  background: #2e7d32;
+}
+
+.traits-list {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
+.item-actions {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.weapon-action-btn {
+  background: #f0f0f0;
+  border: 1px solid #8b0000;
+  color: #8b0000;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weapon-action-btn:hover {
+  background: #8b0000;
+  color: white;
+}
+
+.weapon-action-btn.attack:hover {
+  background: #d32f2f;
+}
+
+.weapon-action-btn.parry:hover {
+  background: #1976d2;
+}
+
+.weapon-action-btn.dodge:hover {
+  background: #388e3c;
+}
+
+.item-controls {
+  display: flex;
+  gap: 5px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+.equipment-item:hover .item-controls {
+  opacity: 1;
+}
+
+.item-controls a {
+  font-size: 12px;
+  color: #666;
+  padding: 4px 6px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.item-controls a:hover {
+  color: #8b0000;
+  background: rgba(139,0,0,0.1);
+}
+
+.item-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.item-damage {
+  color: #333;
+}
+
+.item-dice-pools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.dice-pool {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dice-pool label {
+  font-weight: bold;
+  color: #8b0000;
+  min-width: 50px;
+}
+
+.dice-pool span {
+  color: #333;
+}
+
+.item-ammo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.item-ammo label {
+  font-weight: bold;
+  color: #8b0000;
+  min-width: 50px;
+}
+
+.ammo-counter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ammo-input {
+  width: 50px;
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  text-align: center;
+  font-family: 'New Rocker', cursive;
+}
+
+.ammo-input:focus {
+  border-color: #8b0000;
+  box-shadow: 0 0 2px rgba(139, 0, 0, 0.3);
+}
+
+.placeholder-section {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  background: rgba(255,255,255,0.5);
+}
+
+.placeholder-section p {
+  margin: 0 0 5px 0;
+  font-style: italic;
+}
+
+.placeholder-section small {
+  color: #999;
+}
+
+.no-equipment {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.empty-state {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.empty-state i {
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.empty-state h4 {
+  margin: 0 0 10px 0;
+  color: #8b0000;
+  font-family: 'New Rocker', cursive;
+}
+
+.empty-state p {
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .item-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .item-info {
+    justify-content: flex-start;
+  }
+  
+  .item-actions {
+    justify-content: center;
+  }
+  
+  .item-dice-pools {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .equipment-controls {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+</style>

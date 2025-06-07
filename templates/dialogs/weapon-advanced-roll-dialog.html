@@ -1,0 +1,217 @@
+<form class="advanced-roll-dialog flexcol">
+  <div class="dialog-section">
+    <h3>{{weapon.name}} - {{capitalize action}} Avançado</h3>
+    
+    <div class="form-group">
+      <div class="flexrow">
+        <div class="flex1">
+          <label for="linkedSkill">Skill:</label>
+          <select name="linkedSkill">
+            <option value="">Nenhuma</option>
+            {{#each skills}}
+            <option value="{{this.name}}" {{#ifCond this.name "==" ../actionData.skill}}selected{{/ifCond}}>{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="flex1">
+          <label for="linkedStat">Stat:</label>
+          <select name="linkedStat">
+            <option value="">Nenhum</option>
+            {{#each stats}}
+            <option value="{{this.name}}" {{#ifCond this.name "==" ../actionData.stat}}selected{{/ifCond}}>{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="flexrow">
+        <div class="flex1">
+          <label for="diceModifier">Bonus Dice:</label>
+          <input type="number" name="diceModifier" value="0" min="-10" max="10" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="edModifier">Bonus ED:</label>
+          <input type="number" name="edModifier" value="0" min="-10" max="10" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="mdModifier">Bonus MD:</label>
+          <input type="number" name="mdModifier" value="0" min="-10" max="10" step="1" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="flexrow">
+        <div class="flex1">
+          <label for="difficulty">Dificuldade:</label>
+          <input type="number" name="difficulty" value="{{difficulty}}" min="0" max="10" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="penalty">Penalidade:</label>
+          <input type="number" name="penalty" value="0" min="0" max="20" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="edSet">set ED to:</label>
+          <input type="number" name="edSet" value="{{baseEDSet}}" min="2" max="10" step="1" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dialog-section">
+    <h4>Weapon Bonuses</h4>
+    <div class="weapon-bonuses">
+      <div class="bonus-line">
+        <strong>Dice:</strong> +{{actionData.dicebonus}} | 
+        <strong>Expert:</strong> +{{actionData.edbonus}} | 
+        <strong>Master:</strong> +{{actionData.mdbonus}}
+      </div>
+    </div>
+  </div>
+
+  {{#if targets}}
+  <div class="dialog-section">
+    <h4>Alvos Selecionados</h4>
+    <div class="targets-list">
+      {{#each targets}}
+      <div class="target-item">
+        <img src="{{this.texture.src}}" width="24" height="24" />
+        <span>{{this.name}}</span>
+        {{#if this.actor.system.defense}}
+          <small>(Defesa: {{this.actor.system.defense}})</small>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="dialog-section">
+    <label for="customFlavor">Texto Personalizado:</label>
+    <input type="text" name="customFlavor" placeholder="Descrição adicional para a rolagem..." />
+    
+    <div class="total-simple" id="totalDiceDisplay">
+      Total: {{baseDice}}d {{baseED}}e{{baseEDSet}} {{baseMD}}m
+    </div>
+  </div>
+</form>
+
+<style>
+.advanced-roll-dialog {
+  gap: 10px;
+  font-family: 'New Rocker', cursive;
+}
+
+.dialog-section {
+  border: 1px solid #8b0000;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
+.dialog-section h3, .dialog-section h4 {
+  margin: 0 0 8px 0;
+  color: #5a0000;
+  border-bottom: 1px solid #5a0000;
+  padding-bottom: 4px;
+  font-family: 'New Rocker', cursive;
+  font-weight: normal;
+}
+
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-group label {
+  font-weight: normal;
+  margin-bottom: 2px;
+  display: block;
+  font-size: 12px;
+  color: #333;
+}
+
+.form-group input, 
+.form-group select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-family: 'New Rocker', cursive;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+  border-color: #8b0000;
+  box-shadow: 0 0 3px rgba(139, 0, 0, 0.3);
+}
+
+.flexrow {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.weapon-bonuses {
+  background: #f5f5f5;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.bonus-line {
+  text-align: center;
+  color: #333;
+}
+
+.targets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.target-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.target-item img {
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.target-item span {
+  font-weight: bold;
+  color: #333;
+}
+
+.target-item small {
+  color: #666;
+  font-style: italic;
+}
+
+.total-simple {
+  margin-top: 8px;
+  padding: 6px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'New Rocker', cursive;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+</style>

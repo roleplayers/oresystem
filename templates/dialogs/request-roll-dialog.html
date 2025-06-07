@@ -1,0 +1,58 @@
+<!-- Request Roll Dialog - GM selects participants -->
+<div class="ore-request-dialog">
+    <h3>Select Participants</h3>
+    
+    <div class="form-group">
+        <label>Players</label>
+        <div class="participants-list">
+            {{#each users}}
+            <label class="participant-option">
+                <input type="checkbox" name="user" value="{{this.id}}" checked>
+                <span>{{this.name}}</span>
+                {{#if this.character}}
+                <small>({{this.character.name}})</small>
+                {{/if}}
+            </label>
+            {{/each}}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Additional Actors</label>
+        <div class="participants-list">
+            {{#each actors}}
+            <label class="participant-option">
+                <input type="checkbox" name="actor" value="{{this.id}}">
+                <span>{{this.name}}</span>
+            </label>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<style>
+.ore-request-dialog {
+    padding: 10px;
+}
+
+.participants-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.participant-option {
+    display: block;
+    padding: 3px 0;
+}
+
+.participant-option:hover {
+    background: #f0f0f0;
+}
+
+.participant-option small {
+    color: #666;
+}
+</style>

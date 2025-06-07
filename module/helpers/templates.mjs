@@ -10,5 +10,10 @@
     "systems/oresystem/templates/actor/parts/actor-attributes.html",
     "systems/oresystem/templates/actor/parts/actor-powers.html",
     "systems/oresystem/templates/actor/parts/actor-health.html",
+    "systems/oresystem/templates/actor/parts/actor-equipment.html",
+    
+    // Dialog templates
+    "systems/oresystem/templates/dialogs/advanced-roll-dialog.html",
+    "systems/oresystem/templates/dialogs/weapon-advanced-roll-dialog.html",
   ]);
 };

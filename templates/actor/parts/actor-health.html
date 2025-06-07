@@ -1,20 +1,313 @@
-<div class="resource grid grid-2col align-center ">
-    {{#each hitlocs as |location index|}}
-    <div>
-        <label for="location.no" class="label">{{#if (lessThan location.data.noStart location.data.noEnd)}}{{location.data.noStart}}-{{/if}}{{location.data.noEnd}}</label>
-        <div><label for="location.name" class="resource-label">{{location.data.name}}</label></div>
-        <div class="resource-content flexrow flex-center flex-between">
-            <div class="resource-counter" data-states="/:shock,x:killing" data-max="{{location.data.max}}"
-                data-shock="{{location.data.shock}}" data-killing="{{location.data.killing}}" data-name="{{location._id}}">
-                {{#numLoop location.data.max}}
-                <span class="resource-counter-step" data-index="{{this}}" data-state="">☐</span>
-                {{/numLoop}}
+<div class="health-section">
+    <div class="health-header">
+        <h3>Hit Locations</h3>
+        <div class="damage-legend">
+            <span class="legend-item">
+                <span class="damage-box empty">☐</span> Vazio
+            </span>
+            <span class="legend-item">
+                <span class="damage-box shock">/</span> Shock
+            </span>
+            <span class="legend-item">
+                <span class="damage-box killing">×</span> Killing
+            </span>
+        </div>
+    </div>
+    
+    <div class="hit-locations-grid">
+        {{#each hitlocs as |location index|}}
+        <div class="item hitloc-item" data-item-id="{{location._id}}">
+            <div class="hitloc-header">
+                <span class="location-range">{{location.system.noStart}}-{{location.system.noEnd}}</span>
+                <span class="location-name">{{location.system.name}}</span>
+                <div class="item-controls">
+                    <a class="item-control item-edit" title="Editar Hit Location">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a class="item-control item-delete" title="Remover Hit Location">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            
+            {{#if location.system.armor}}
+            <div class="armor-line">
+                <span class="armor-badge">Armor {{location.system.armor}}</span>
+            </div>
+            {{/if}}
+            
+            <div class="damage-boxes-line">
+                <div class="resource-counter" 
+                     data-states="/:shock,x:killing" 
+                     data-max="{{location.system.max}}"
+                     data-shock="{{location.system.shock}}" 
+                     data-killing="{{location.system.killing}}" 
+                     data-name="{{location._id}}">
+                    {{#numLoop location.system.max}}
+                    <span class="resource-counter-step" data-index="{{this}}" data-state="">☐</span>
+                    {{/numLoop}}
+                </div>
             </div>
         </div>
-        <div class="item-controls">
-            <a class="item-control item-edit" title="Edit Item" data-name="{{location._id}}"><i class="fas fa-edit"></i></a>
-            <a class="item-control item-delete" title="Delete Item" data-name="{{location._id}}"><i class="fas fa-trash"></i></a>
-          </div>
+        {{/each}}
+        
+        {{#unless hitlocs}}
+        <div class="no-hitlocs">
+            <p>Nenhuma hit location configurada.</p>
+            <p><em>Use o compendium "Hit Locations" para adicionar localizações padrão.</em></p>
+        </div>
+        {{/unless}}
     </div>
-    {{/each}}
 </div>
+
+<style>
+.health-section {
+  background: rgba(245,245,245,0.3);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 10px 0;
+}
+
+.health-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #8b0000;
+}
+
+.health-header h3 {
+  margin: 0;
+  color: #8b0000;
+  font-family: 'New Rocker', cursive;
+}
+
+.damage-legend {
+  display: flex;
+  gap: 15px;
+  font-size: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #666;
+}
+
+.damage-box {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #333;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.damage-box.empty {
+  background: white;
+}
+
+.damage-box.shock {
+  background: #ffeb3b;
+  color: #333;
+}
+
+.damage-box.killing {
+  background: #f44336;
+  color: white;
+}
+
+.hit-locations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.hitloc-item {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px;
+  background: rgba(255,255,255,0.9);
+  transition: all 0.2s ease;
+}
+
+.hitloc-item:hover {
+  background: rgba(245,245,245,0.9);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.hitloc-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  min-height: 20px;
+}
+
+.location-range {
+  background: #8b0000;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.location-name {
+  font-weight: bold;
+  color: #333;
+  font-size: 13px;
+  flex: 1;
+}
+
+.item-controls {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 3px;
+  padding: 2px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+}
+
+.hitloc-item:hover .item-controls {
+  opacity: 1;
+}
+
+.item-controls a {
+  font-size: 11px;
+  margin: 0 2px;
+  color: #666;
+  transition: color 0.2s ease;
+  padding: 2px 3px;
+  border-radius: 2px;
+}
+
+.item-controls a:hover {
+  color: #8b0000;
+  background: rgba(139,0,0,0.1);
+}
+
+.armor-line {
+  margin-bottom: 5px;
+  min-height: 16px;
+}
+
+.armor-badge {
+  background: #607d8b;
+  color: white;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.damage-boxes-line {
+  display: flex;
+  justify-content: center;
+}
+
+.resource-counter {
+  display: flex;
+  gap: 1px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.resource-counter-step {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #333;
+  background: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.resource-counter-step:hover {
+  transform: scale(1.1);
+}
+
+.resource-counter-step[data-state=""] {
+  background: white;
+  color: #333;
+  border-color: #333;
+}
+
+.resource-counter-step[data-state=""]:hover {
+  background: #f0f0f0;
+  border-color: #8b0000;
+}
+
+.resource-counter-step[data-state="/"] {
+  background: #ffeb3b;
+  color: #333;
+  border-color: #f57f17;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.resource-counter-step[data-state="x"] {
+  background: #f44336;
+  color: white;
+  border-color: #c62828;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.no-hitlocs {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+}
+
+/* Responsive - manter 2 colunas */
+@media (max-width: 768px) {
+  .hit-locations-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  
+  .resource-counter-step {
+    width: 16px;
+    height: 16px;
+    font-size: 11px;
+  }
+  
+  .hitloc-item {
+    padding: 6px;
+  }
+  
+  .location-name {
+    font-size: 12px;
+  }
+}
+
+/* Apenas em telas muito pequenas vira 1 coluna */
+@media (max-width: 400px) {
+  .hit-locations-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .resource-counter-step {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+  }
+}
+</style>

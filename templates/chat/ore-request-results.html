@@ -1,0 +1,220 @@
+<!-- Request Roll Results - Shows consolidated results -->
+<div class="ore-results-card">
+    <header class="results-header">
+        <h3><i class="fas fa-trophy"></i> Roll Results</h3>
+        <button class="toggle-collapse" onclick="this.closest('.ore-results-card').classList.toggle('collapsed')">
+            <i class="fas fa-compress-alt"></i>
+        </button>
+    </header>
+    
+    <div class="results-content">
+        {{#each results}}
+        <div class="result-row" data-user-id="{{userId}}" data-max-width="{{maxWidth}}">
+            <div class="result-header">
+                <span class="result-rank">#{{@index}}</span>
+                <span class="result-name">{{name}}</span>
+                <span class="result-summary">
+                    {{#if result.sets.length}}
+                        Best: {{maxWidth}}×{{result.sets.[0].height}}
+                    {{else}}
+                        No sets
+                    {{/if}}
+                </span>
+                <button class="toggle-details" onclick="this.closest('.result-row').classList.toggle('expanded')">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            
+            <div class="result-details">
+                <div class="ore-sets">
+                    {{#each result.sets}}
+                    <div class="ore-set-roll mini" data-width="{{width}}" data-height="{{height}}">
+                        {{#each rollsInSet}}
+                        <div class="ore-single-roll in-set mini" 
+                             style="background-image: url('systems/oresystem/images/dice/d10_{{this}}.png')">
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{/each}}
+                </div>
+                
+                {{#if result.looseDice.length}}
+                <div class="ore-loose-dice">
+                    <span class="loose-label">Loose:</span>
+                    {{#each result.looseDice}}
+                    <div class="ore-single-roll loose mini" 
+                         style="background-image: url('systems/oresystem/images/dice/d10_loose_{{this}}.png')">
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                
+                {{#if result.masterDice.length}}
+                <div class="ore-master-dice">
+                    <span class="master-label">Master:</span>
+                    {{#each result.masterDice}}
+                    <div class="ore-single-roll loose mini" 
+                         style="background-image: url('systems/oresystem/images/dice/d10_{{this}}.png')">
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    
+    <footer class="results-footer">
+        <button class="update-initiative" onclick="game.oresystem.ORERequestRoll.updateInitiative(this)">
+            <i class="fas fa-list-ol"></i> Update Initiative
+        </button>
+    </footer>
+</div>
+
+<style>
+.ore-results-card {
+    border: 2px solid #8b0000;
+    border-radius: 5px;
+    background: #f9f9f9;
+    margin: 10px 0;
+}
+
+.ore-results-card.collapsed .results-content,
+.ore-results-card.collapsed .results-footer {
+    display: none;
+}
+
+.results-header {
+    background: #8b0000;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.results-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.toggle-collapse {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 3px 8px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.results-content {
+    padding: 10px;
+}
+
+.result-row {
+    border: 1px solid #ddd;
+    background: white;
+    margin-bottom: 5px;
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+
+.result-row:first-child {
+    border-color: #ffd700;
+    background: #fffacd;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: move;
+    gap: 10px;
+}
+
+.result-rank {
+    font-size: 20px;
+    font-weight: bold;
+    color: #8b0000;
+    min-width: 40px;
+}
+
+.result-name {
+    font-weight: bold;
+    flex: 1;
+}
+
+.result-summary {
+    color: #666;
+    font-size: 14px;
+}
+
+.toggle-details {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.result-details {
+    display: none;
+    padding: 0 10px 10px;
+    border-top: 1px solid #eee;
+}
+
+.result-row.expanded .result-details {
+    display: block;
+}
+
+.result-row.expanded .toggle-details i {
+    transform: rotate(180deg);
+}
+
+/* Mini dice styles */
+.ore-set-roll.mini {
+    padding: 3px;
+    background: rgba(139, 0, 0, 0.05);
+    border: 1px solid #8b0000;
+    display: inline-flex;
+    margin-right: 5px;
+}
+
+.ore-single-roll.mini {
+    width: 30px;
+    height: 30px;
+}
+
+.loose-label, .master-label {
+    font-size: 12px;
+    color: #666;
+    margin-right: 5px;
+}
+
+.results-footer {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+}
+
+.update-initiative {
+    background: #8b0000;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.update-initiative:hover {
+    background: #5a0000;
+}
+
+/* Drag and drop visual feedback */
+.result-row.dragging {
+    opacity: 0.5;
+}
+
+.result-row.drag-over {
+    border-top: 3px solid #8b0000;
+}
+</style>

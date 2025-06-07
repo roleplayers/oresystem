@@ -1,0 +1,278 @@
+<form class="advanced-roll-dialog flexcol">
+  <div class="dialog-section">
+    <h3>{{item.name}} - Rolagem Avançada</h3>
+    
+    <div class="form-group">
+      <div class="flexrow">
+        <div class="flex1">
+          <label for="diceModifier">Bonus Dice:</label>
+          <input type="number" name="diceModifier" value="0" min="-10" max="10" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="difficulty">Dificuldade:</label>
+          <input type="number" name="difficulty" value="{{difficulty}}" min="0" max="10" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="penalty">Penalidade:</label>
+          <input type="number" name="penalty" value="0" min="0" max="20" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="edSet">set ED to:</label>
+          <input type="number" name="edSet" value="{{baseEDSet}}" min="2" max="10" step="1" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="flexrow">
+        <div class="flex1">
+          <label for="edModifier">Bonus ED:</label>
+          <input type="number" name="edModifier" value="0" min="-10" max="10" step="1" />
+        </div>
+        <div class="flex1">
+          <label for="mdModifier">Bonus MD:</label>
+          <input type="number" name="mdModifier" value="0" min="-10" max="10" step="1" />
+        </div>
+        {{#if (eq item.type "skill")}}
+        <div class="flex1">
+          <label for="linkedStat">Atributo Linkado:</label>
+          <select name="linkedStat">
+            <option value="{{item.system.stat}}" selected>{{item.system.stat}}</option>
+            {{#each stats}}
+              {{#unless (eq this.name ../item.system.stat)}}
+              <option value="{{this.name}}">{{this.name}}</option>
+              {{/unless}}
+            {{/each}}
+          </select>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  {{#if targets}}
+  <div class="dialog-section">
+    <h4>Alvos Selecionados</h4>
+    <div class="targets-list">
+      {{#each targets}}
+      <div class="target-item">
+        <img src="{{this.texture.src}}" width="24" height="24" />
+        <span>{{this.name}}</span>
+        {{#if this.actor.system.defense}}
+          <small>(Defesa: {{this.actor.system.defense}})</small>
+        {{/if}}
+      </div>
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="dialog-section">
+    <label for="customFlavor">Texto Personalizado:</label>
+    <input type="text" name="customFlavor" placeholder="Descrição adicional para a rolagem..." />
+    
+    <div class="total-simple" id="totalDiceDisplay">
+      Total: {{baseDice}}d {{baseED}}e{{baseEDSet}} {{baseMD}}m
+    </div>
+  </div>
+</form>
+
+<style>
+.advanced-roll-dialog {
+  gap: 10px;
+  font-family: 'NewRocker', cursive;
+}
+
+.dialog-section {
+  border: 1px solid #8b0000;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+
+.dialog-section h3, .dialog-section h4 {
+  margin: 0 0 8px 0;
+  color: #5a0000;
+  border-bottom: 1px solid #5a0000;
+  padding-bottom: 4px;
+  font-family: 'NewRocker', cursive;
+  font-weight: normal;
+}
+
+.dialog-section .form-group {
+  margin-bottom: 8px;
+}
+
+.dialog-section .form-group label {
+  font-weight: normal;
+  margin-bottom: 2px;
+  display: block;
+  font-size: 12px;
+  color: #333;
+}
+
+.dialog-section .form-group input, 
+.dialog-section .form-group select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-family: 'NewRocker', cursive;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.dialog-section .form-group input:focus, 
+.dialog-section .form-group select:focus {
+  border-color: #8b0000;
+  box-shadow: 0 0 3px rgba(139, 0, 0, 0.3);
+}
+
+.dialog-section .flexrow {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.dialog-section .flex1 {
+  flex: 1;
+}
+
+.targets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.target-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  background: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.target-item img {
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.target-item span {
+  font-weight: bold;
+  color: #333;
+}
+
+.target-item small {
+  color: #666;
+  font-style: italic;
+}
+
+.total-simple {
+  margin-top: 8px;
+  padding: 6px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'NewRocker', cursive;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+</style>
+
+<style>
+.advanced-roll-dialog {
+  gap: 10px;
+}
+
+.dialog-section {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.dialog-section h3, .dialog-section h4 {
+  margin: 0 0 8px 0;
+  color: #5a0000;
+  border-bottom: 1px solid #5a0000;
+  padding-bottom: 4px;
+}
+
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-group label {
+  font-weight: normal;
+  margin-bottom: 2px;
+  display: block;
+  font-size: 12px;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-family: 'NewRocker', cursive;
+}
+
+.flexrow {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.base-values {
+  background: #f5f5f5;
+  padding: 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.base-values small {
+  display: block;
+  font-weight: normal;
+  color: #666;
+  margin-top: 4px;
+}
+
+.targets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.target-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.target-item img {
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.total-display {
+  background: #5a0000;
+  color: #f5f5dc;
+  padding: 12px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  border: 2px solid #5a0000;
+}
+</style>

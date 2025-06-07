@@ -1,0 +1,453 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Weapon Name"/></h1>
+      
+      <div class="grid grid-2col">
+        <div class="resource">
+          <label class="resource-label">Weapon Type</label>
+          <select name="system.subtype">
+            <option value="melee" {{#ifCond system.subtype "==" "melee"}}selected{{/ifCond}}>Melee</option>
+            <option value="ranged" {{#ifCond system.subtype "==" "ranged"}}selected{{/ifCond}}>Ranged</option>
+          </select>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Traits</label>
+          <input type="text" name="system.traits" value="{{join system.traits ', '}}" placeholder="two-handed, armor piercing, heavy..."/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="actions">Actions</a>
+    <a class="item" data-tab="damage">Damage</a>
+    <a class="item" data-tab="properties">Properties</a>
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    
+    <!-- Actions Tab -->
+    <div class="tab actions" data-group="primary" data-tab="actions">
+      <div class="weapon-actions">
+        
+        <!-- Attack Action -->
+        <div class="weapon-action-section">
+          <h3><i class="fas fa-sword"></i> Attack</h3>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Skill</label>
+              <select name="system.attack.skill">
+                <option value="">None</option>
+                {{#each skills}}
+                <option value="{{this.name}}" {{#ifCond ../system.attack.skill "==" this.name}}selected{{/ifCond}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Stat</label>
+              <select name="system.attack.stat">
+                <option value="">None</option>
+                {{#each stats}}
+                <option value="{{this.name}}" {{#ifCond ../system.attack.stat "==" this.name}}selected{{/ifCond}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Roll Attack</label>
+              <button type="button" class="weapon-roll-btn" data-action="attack">
+                <i class="fas fa-dice-d20"></i> Roll
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Dice Bonus</label>
+              <input type="number" name="system.attack.dicebonus" value="{{system.attack.dicebonus}}" min="0" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Expert Dice Bonus</label>
+              <input type="number" name="system.attack.edbonus" value="{{system.attack.edbonus}}" min="0" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Master Dice Bonus</label>
+              <input type="number" name="system.attack.mdbonus" value="{{system.attack.mdbonus}}" min="0" max="10" step="1"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Parry Action -->
+        <div class="weapon-action-section">
+          <h3><i class="fas fa-shield-alt"></i> Parry</h3>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Skill</label>
+              <select name="system.parry.skill">
+                <option value="">None</option>
+                {{#each skills}}
+                <option value="{{this.name}}" {{#ifCond ../system.parry.skill "==" this.name}}selected{{/ifCond}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Stat</label>
+              <select name="system.parry.stat">
+                <option value="">None</option>
+                {{#each stats}}
+                <option value="{{this.name}}" {{#ifCond ../system.parry.stat "==" this.name}}selected{{/ifCond}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Roll Parry</label>
+              <button type="button" class="weapon-roll-btn" data-action="parry">
+                <i class="fas fa-dice-d20"></i> Roll
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Dice Bonus</label>
+              <input type="number" name="system.parry.dicebonus" value="{{system.parry.dicebonus}}" min="0" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Expert Dice Bonus</label>
+              <input type="number" name="system.parry.edbonus" value="{{system.parry.edbonus}}" min="0" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Master Dice Bonus</label>
+              <input type="number" name="system.parry.mdbonus" value="{{system.parry.mdbonus}}" min="0" max="10" step="1"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dodge Action -->
+        <div class="weapon-action-section">
+          <h3><i class="fas fa-running"></i> Dodge</h3>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Skill</label>
+              <select name="system.dodge.skill">
+                <option value="">None</option>
+                {{#each skills}}
+                <option value="{{this.name}}" {{#ifCond ../system.dodge.skill "==" this.name}}selected{{/ifCond}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Stat</label>
+              <select name="system.dodge.stat">
+                <option value="">None</option>
+                {{#each stats}}
+                <option value="{{this.name}}" {{#ifCond ../system.dodge.stat "==" this.name}}selected{{/ifCond}}>{{this.name}}</option>
+                {{/each}}
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Roll Dodge</label>
+              <button type="button" class="weapon-roll-btn" data-action="dodge">
+                <i class="fas fa-dice-d20"></i> Roll
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Dice Bonus</label>
+              <input type="number" name="system.dodge.dicebonus" value="{{system.dodge.dicebonus}}" min="0" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Expert Dice Bonus</label>
+              <input type="number" name="system.dodge.edbonus" value="{{system.dodge.edbonus}}" min="0" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Master Dice Bonus</label>
+              <input type="number" name="system.dodge.mdbonus" value="{{system.dodge.mdbonus}}" min="0" max="10" step="1"/>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Damage Tab -->
+    <div class="tab damage" data-group="primary" data-tab="damage">
+      <div class="damage-sections">
+        
+        <!-- Main Damage -->
+        <div class="damage-section">
+          <h3><i class="fas fa-explosion"></i> Main Damage</h3>
+          <div class="grid grid-2col">
+            <div class="resource">
+              <label class="resource-label">Damage Formula</label>
+              <select name="system.damage.main.formula">
+                <option value="width" {{#ifCond system.damage.main.formula "==" "width"}}selected{{/ifCond}}>Width</option>
+                <option value="width+1" {{#ifCond system.damage.main.formula "==" "width+1"}}selected{{/ifCond}}>Width + 1</option>
+                <option value="width+2" {{#ifCond system.damage.main.formula "==" "width+2"}}selected{{/ifCond}}>Width + 2</option>
+                <option value="width+3" {{#ifCond system.damage.main.formula "==" "width+3"}}selected{{/ifCond}}>Width + 3</option>
+                <option value="1" {{#ifCond system.damage.main.formula "==" "1"}}selected{{/ifCond}}>1</option>
+                <option value="2" {{#ifCond system.damage.main.formula "==" "2"}}selected{{/ifCond}}>2</option>
+                <option value="3" {{#ifCond system.damage.main.formula "==" "3"}}selected{{/ifCond}}>3</option>
+                <option value="4" {{#ifCond system.damage.main.formula "==" "4"}}selected{{/ifCond}}>4</option>
+                <option value="5" {{#ifCond system.damage.main.formula "==" "5"}}selected{{/ifCond}}>5</option>
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Damage Type</label>
+              <select name="system.damage.main.type">
+                <option value="killing" {{#ifCond system.damage.main.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
+                <option value="shock" {{#ifCond system.damage.main.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
+                <option value="fire" {{#ifCond system.damage.main.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
+                <option value="cold" {{#ifCond system.damage.main.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
+                <option value="poison" {{#ifCond system.damage.main.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
+                <option value="acid" {{#ifCond system.damage.main.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
+                <option value="electric" {{#ifCond system.damage.main.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
+                <option value="psychic" {{#ifCond system.damage.main.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alt Damage -->
+        <div class="damage-section">
+          <h3><i class="fas fa-fire"></i> Alternative Damage</h3>
+          <div class="grid grid-2col">
+            <div class="resource">
+              <label class="resource-label">Damage Formula</label>
+              <select name="system.damage.alt.formula">
+                <option value="">None</option>
+                <option value="width" {{#ifCond system.damage.alt.formula "==" "width"}}selected{{/ifCond}}>Width</option>
+                <option value="width+1" {{#ifCond system.damage.alt.formula "==" "width+1"}}selected{{/ifCond}}>Width + 1</option>
+                <option value="width+2" {{#ifCond system.damage.alt.formula "==" "width+2"}}selected{{/ifCond}}>Width + 2</option>
+                <option value="width+3" {{#ifCond system.damage.alt.formula "==" "width+3"}}selected{{/ifCond}}>Width + 3</option>
+                <option value="1" {{#ifCond system.damage.alt.formula "==" "1"}}selected{{/ifCond}}>1</option>
+                <option value="2" {{#ifCond system.damage.alt.formula "==" "2"}}selected{{/ifCond}}>2</option>
+                <option value="3" {{#ifCond system.damage.alt.formula "==" "3"}}selected{{/ifCond}}>3</option>
+                <option value="4" {{#ifCond system.damage.alt.formula "==" "4"}}selected{{/ifCond}}>4</option>
+                <option value="5" {{#ifCond system.damage.alt.formula "==" "5"}}selected{{/ifCond}}>5</option>
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Damage Type</label>
+              <select name="system.damage.alt.type">
+                <option value="">None</option>
+                <option value="killing" {{#ifCond system.damage.alt.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
+                <option value="shock" {{#ifCond system.damage.alt.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
+                <option value="fire" {{#ifCond system.damage.alt.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
+                <option value="cold" {{#ifCond system.damage.alt.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
+                <option value="poison" {{#ifCond system.damage.alt.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
+                <option value="acid" {{#ifCond system.damage.alt.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
+                <option value="electric" {{#ifCond system.damage.alt.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
+                <option value="psychic" {{#ifCond system.damage.alt.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Properties Tab -->
+    <div class="tab properties" data-group="primary" data-tab="properties">
+      <div class="properties-sections">
+        
+        <!-- Ammunition -->
+        {{#ifCond system.subtype "==" "ranged"}}
+        <div class="property-section">
+          <h3><i class="fas fa-bullseye"></i> Ammunition</h3>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Type</label>
+              <input type="text" name="system.ammunition.type" value="{{system.ammunition.type}}" placeholder="arrows, bullets, charges..."/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Current</label>
+              <input type="number" name="system.ammunition.current" value="{{system.ammunition.current}}" min="0" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Maximum</label>
+              <input type="number" name="system.ammunition.max" value="{{system.ammunition.max}}" min="0" step="1"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Range -->
+        <div class="property-section">
+          <h3><i class="fas fa-crosshairs"></i> Range</h3>
+          <div class="grid grid-3col">
+            <div class="resource">
+              <label class="resource-label">Short Range</label>
+              <input type="number" name="system.range.short" value="{{system.range.short}}" min="0" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Medium Range</label>
+              <input type="number" name="system.range.medium" value="{{system.range.medium}}" min="0" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Long Range</label>
+              <input type="number" name="system.range.long" value="{{system.range.long}}" min="0" step="1"/>
+            </div>
+          </div>
+        </div>
+        {{/ifCond}}
+
+        <!-- Quick Reference -->
+        <div class="property-section">
+          <h3><i class="fas fa-info-circle"></i> Quick Reference</h3>
+          <div class="weapon-summary">
+            <div class="summary-line">
+              <strong>Attack:</strong> 
+              {{#if system.attack.skill}}{{system.attack.skill}}{{else}}No Skill{{/if}}
+              {{#if system.attack.stat}} + {{system.attack.stat}}{{/if}}
+              {{#if system.attack.dicebonus}} (+{{system.attack.dicebonus}}d){{/if}}
+              {{#if system.attack.edbonus}} (+{{system.attack.edbonus}}e){{/if}}
+              {{#if system.attack.mdbonus}} (+{{system.attack.mdbonus}}m){{/if}}
+            </div>
+            <div class="summary-line">
+              <strong>Damage:</strong> 
+              {{system.damage.main.formula}} {{system.damage.main.type}}
+              {{#if system.damage.alt.formula}} + {{system.damage.alt.formula}} {{system.damage.alt.type}}{{/if}}
+            </div>
+            {{#if system.traits}}
+            <div class="summary-line">
+              <strong>Traits:</strong> {{join system.traits ', '}}
+            </div>
+            {{/if}}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Description Tab -->
+    <div class="tab description" data-group="primary" data-tab="description">
+      <textarea name="system.description" rows="12">{{system.description}}</textarea>
+    </div>
+    
+  </section>
+</form>
+
+<style>
+.weapon-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.weapon-action-section {
+  border: 2px solid #8b0000;
+  border-radius: 8px;
+  padding: 15px;
+  background: rgba(245, 245, 245, 0.3);
+}
+
+.weapon-action-section h3 {
+  margin: 0 0 10px 0;
+  color: #8b0000;
+  font-family: 'New Rocker', cursive;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weapon-roll-btn {
+  width: 100%;
+  padding: 8px;
+  background: #8b0000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'New Rocker', cursive;
+  transition: background 0.3s ease;
+}
+
+.weapon-roll-btn:hover {
+  background: #5a0000;
+}
+
+.damage-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.damage-section {
+  border: 2px solid #8b0000;
+  border-radius: 8px;
+  padding: 15px;
+  background: rgba(245, 245, 245, 0.3);
+}
+
+.damage-section h3 {
+  margin: 0 0 10px 0;
+  color: #8b0000;
+  font-family: 'New Rocker', cursive;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.properties-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.property-section {
+  border: 2px solid #8b0000;
+  border-radius: 8px;
+  padding: 15px;
+  background: rgba(245, 245, 245, 0.3);
+}
+
+.property-section h3 {
+  margin: 0 0 10px 0;
+  color: #8b0000;
+  font-family: 'New Rocker', cursive;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weapon-summary {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.summary-line {
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.summary-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Resource styling consistency */
+.resource-label {
+  font-weight: bold;
+  font-size: 11px;
+  color: #8b0000;
+  margin-bottom: 2px;
+  display: block;
+}
+
+.resource input, .resource select {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-family: 'New Rocker', cursive;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.resource input:focus, .resource select:focus {
+  border-color: #8b0000;
+  box-shadow: 0 0 3px rgba(139, 0, 0, 0.3);
+}
+</style>

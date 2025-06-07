@@ -1,0 +1,36 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="header-fields">
+      <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
+      <div class="grid grid-4col">
+        <div class="resource">
+          <label class="resource-label">Name</label>
+          <input type="text" name="system.name" value="{{system.name}}"/>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Lowest location number</label>
+          <input type="text" name="system.noStart" value="{{system.noStart}}" data-dtype="Number"/>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Highest location number</label>
+          <input type="text" name="system.noEnd" value="{{system.noEnd}}" data-dtype="Number"/>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Total boxes</label>
+          <input type="text" name="system.max" value="{{system.max}}" data-dtype="Number"/>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="description">Description</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab" data-group="primary" data-tab="description">
+      <textarea name="system.description">{{system.description}}</textarea>
+    </div>
+  </section>
+</form>

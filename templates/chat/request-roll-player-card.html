@@ -1,0 +1,163 @@
+<!-- Request Roll Player Card - Shows configuration status for each participant -->
+<div class="ore-request-card" data-request-id="{{requestId}}">
+    <header class="card-header">
+        <h3><i class="fas fa-dice-d20"></i> Group Roll Request</h3>
+        {{#if isGM}}
+        <div class="gm-controls">
+            <button class="ore-unlock-rolls" {{#unless allConfigured}}disabled{{/unless}}>
+                <i class="fas fa-unlock"></i> Unlock Rolls
+            </button>
+        </div>
+        {{/if}}
+    </header>
+    
+    <div class="participants-section">
+        {{#each participants}}
+        <div class="participant-row {{#if configured}}configured{{/if}} {{#if rolled}}rolled{{/if}}" 
+             data-user-id="{{userId}}">
+            
+            <div class="participant-info">
+                <span class="participant-name">{{name}}</span>
+                <span class="status-indicators">
+                    {{#if configured}}<i class="fas fa-check-circle" title="Configured"></i>{{/if}}
+                    {{#if rolled}}<i class="fas fa-dice" title="Rolled"></i>{{/if}}
+                </span>
+            </div>
+            
+            <div class="participant-actions">
+                {{#if isCurrentUser}}
+                    {{#unless configured}}
+                    <button class="ore-configure-roll" data-user-id="{{userId}}">
+                        <i class="fas fa-cog"></i> Configure
+                    </button>
+                    {{else}}
+                        {{#unless rolled}}
+                        <button class="ore-execute-roll" data-user-id="{{userId}}" disabled>
+                            <i class="fas fa-dice-d20"></i> Roll
+                        </button>
+                        {{/unless}}
+                    {{/unless}}
+                {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<style>
+.ore-request-card {
+    border: 2px solid #8b0000;
+    border-radius: 5px;
+    background: #f9f9f9;
+    margin: 5px 0;
+}
+
+.card-header {
+    background: #8b0000;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.gm-controls button {
+    background: white;
+    color: #8b0000;
+    border: 1px solid white;
+    padding: 3px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.gm-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.participants-section {
+    padding: 10px;
+}
+
+.participant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    background: white;
+    border-radius: 3px;
+}
+
+.participant-row.configured {
+    background: #f0f8f0;
+    border-color: #90ee90;
+}
+
+.participant-row.rolled {
+    background: #e8f4ff;
+    border-color: #87ceeb;
+}
+
+.participant-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.participant-name {
+    font-weight: bold;
+}
+
+.status-indicators {
+    display: flex;
+    gap: 5px;
+}
+
+.status-indicators i {
+    font-size: 14px;
+}
+
+.fa-check-circle {
+    color: #4caf50;
+}
+
+.fa-dice {
+    color: #2196f3;
+}
+
+.participant-actions button {
+    background: #8b0000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.participant-actions button:hover:not(:disabled) {
+    background: #5a0000;
+}
+
+.participant-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ore-execute-roll:not(:disabled) {
+    background: #4caf50;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+</style>
