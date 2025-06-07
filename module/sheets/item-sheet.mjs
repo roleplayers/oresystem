@@ -82,18 +82,70 @@ export class ReignItemSheet extends ItemSheet {
 
   /* -------------------------------------------- */
 
-  /** @override */
-  activateListeners(html) {
-    super.activateListeners(html);
+/** @override */
+activateListeners(html) {
+  super.activateListeners(html);
 
-    // Everything below here is only needed if the sheet is editable
-    if (!this.isEditable) return;
+  // Everything below here is only needed if the sheet is editable
+  if (!this.isEditable) return;
 
-    // Weapon roll buttons
-    html.find('.weapon-roll-btn').click(this._onWeaponRoll.bind(this));
+  // Weapon roll buttons
+  html.find('.weapon-roll-btn').click(this._onWeaponRoll.bind(this));
 
-    // Roll handlers, click handlers, etc. would go here.
+  // Additional damage controls
+  html.find('.add-additional-damage').click(this._onAddAdditionalDamage.bind(this));
+  html.find('.delete-additional-damage').click(this._onDeleteAdditionalDamage.bind(this));
+
+  // Roll handlers, click handlers, etc. would go here.
+}
+
+/**
+ * Handle adding additional damage
+ * @param {Event} event The originating click event
+ * @private
+ */
+async _onAddAdditionalDamage(event) {
+  event.preventDefault();
+  
+  if (this.item.type !== 'weapon') return;
+
+  const additionalDamage = this.item.system.damage.additional || [];
+  
+  const newDamage = {
+    formula: "width",
+    modifier: 0,
+    type: "killing",
+    condition: ""
+  };
+
+  const updatedAdditional = [...additionalDamage, newDamage];
+
+  await this.item.update({
+    "system.damage.additional": updatedAdditional
+  });
+}
+
+/**
+ * Handle deleting additional damage
+ * @param {Event} event The originating click event
+ * @private
+ */
+async _onDeleteAdditionalDamage(event) {
+  event.preventDefault();
+  
+  if (this.item.type !== 'weapon') return;
+
+  const index = parseInt(event.currentTarget.dataset.index);
+  const additionalDamage = this.item.system.damage.additional || [];
+  
+  if (index >= 0 && index < additionalDamage.length) {
+    const updatedAdditional = additionalDamage.filter((_, i) => i !== index);
+    
+    await this.item.update({
+      "system.damage.additional": updatedAdditional
+    });
   }
+}
 
   /**
    * Handle weapon action rolls

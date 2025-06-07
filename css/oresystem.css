@@ -1644,3 +1644,970 @@ input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:foc
     gap: 5px;
   }
 }
+
+
+/* =================== ATTRIBUTES NEW LAYOUT CSS =================== */
+.attributes-container-new {
+  width: 100%;
+}
+
+.attributes-two-columns-new {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.attributes-column-new {
+  min-width: 0;
+}
+
+.attributes-column-new .items-list {
+  margin-bottom: 20px;
+}
+
+/* Override conflicting styles for new layout */
+.character-main-content .attributes-container-new .oresystem .items-list .item {
+  position: relative;
+  align-items: center;
+  padding: 0 2px;
+  border-bottom: 1px solid #c9c7b8;
+  padding-right: 140px; /* Espaço maior para mais controles */
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item:last-child {
+  border-bottom: none;
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls {
+  display: flex;
+  flex: 0 0 130px; /* Largura maior para mais botões */
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 3px;
+  padding: 2px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item:hover .item-controls {
+  opacity: 1;
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls a {
+  font-size: 12px;
+  text-align: center;
+  margin: 0 2px;
+  color: #666;
+  transition: color 0.2s ease;
+  padding: 2px 3px;
+  border-radius: 2px;
+  min-width: 18px;
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls a:hover {
+  color: #8b0000;
+  background: rgba(139,0,0,0.1);
+}
+
+/* Cores específicas para setas */
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls .stat-move-up:hover {
+  color: #2e7d32;
+  background: rgba(46,125,50,0.1);
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls .stat-move-down:hover {
+  color: #1565c0;
+  background: rgba(21,101,192,0.1);
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-name {
+  flex: 2;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-align: left;
+  align-items: center;
+  display: flex;
+  padding-right: 10px; /* Espaço extra para segurança */
+}
+
+/* Skills não precisam das setas, só stats */
+.character-main-content .attributes-container-new .oresystem .items-list .skill-row .item-controls {
+  flex: 0 0 100px; /* Largura menor para skills */
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .skill-row {
+  padding-right: 110px; /* Padding menor para skills */
+}
+
+/* Responsive para novo layout */
+@media (max-width: 768px) {
+  .attributes-two-columns-new {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .character-main-content .attributes-container-new .oresystem .items-list .item-controls a {
+    font-size: 11px;
+    padding: 1px 2px;
+    min-width: 16px;
+  }
+}
+
+/* =================== ORE ENHANCED ANALYSIS CSS =================== */
+
+/* Analysis Panel Scrollbar */
+.analysis-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.analysis-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.analysis-content::-webkit-scrollbar-thumb {
+  background: #8b0000;
+  border-radius: 3px;
+}
+
+/* Enhanced set visualization */
+.ore-set-roll {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.ore-set-roll:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(139, 0, 0, 0.3);
+}
+
+.ore-set-roll::after {
+  content: attr(data-width) "×" attr(data-height);
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(139, 0, 0, 0.9);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  font-family: 'New Rocker', cursive;
+}
+
+.ore-set-roll:hover::after {
+  opacity: 1;
+}
+
+/* Button animations */
+.calc-damage-btn,
+.calc-hitloc-btn,
+.calculate-all-btn,
+.calculate-weapon-damage-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.calc-damage-btn::before,
+.calc-hitloc-btn::before,
+.calculate-all-btn::before,
+.calculate-weapon-damage-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.calc-damage-btn:hover::before,
+.calc-hitloc-btn:hover::before,
+.calculate-all-btn:hover::before,
+.calculate-weapon-damage-btn:hover::before {
+  left: 100%;
+}
+
+/* Result animations */
+.hitloc-result-item,
+.damage-result-item {
+  animation: slideIn 0.3s ease-out;
+  transform-origin: left center;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Sequence styling enhancements */
+.sequence-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.sequence-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #4caf50, #2e7d32);
+  border-radius: 0 2px 2px 0;
+}
+
+/* Loading states */
+.calculating {
+  position: relative;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.calculating::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #8b0000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 480px) {
+  .ore-analysis-panel {
+    margin: 5px -5px; /* Extend to edges on mobile */
+    border-radius: 0;
+  }
+  
+  .analysis-header {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .analysis-content {
+    padding: 10px;
+    max-height: 250px;
+  }
+  
+  .analysis-section {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .analysis-section h4 {
+    font-size: 12px;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .set-row {
+    padding: 6px;
+  }
+  
+  .set-notation {
+    font-size: 14px;
+  }
+  
+  .set-actions {
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  
+  .calc-damage-btn,
+  .calc-hitloc-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+    min-width: auto;
+  }
+  
+  .hitloc-inputs,
+  .weapon-inputs {
+    gap: 4px;
+  }
+  
+  .target-dropdown,
+  .weapon-dropdown {
+    font-size: 12px;
+    min-width: 120px;
+  }
+  
+  .calculate-all-btn,
+  .calculate-weapon-damage-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Dark mode support (if implemented) */
+@media (prefers-color-scheme: dark) {
+  .ore-analysis-panel {
+    background: rgba(45, 45, 45, 0.95);
+    border-color: #8b0000;
+  }
+  
+  .analysis-section {
+    background: rgba(60, 60, 60, 0.8);
+    border-color: #555;
+  }
+  
+  .summary-item {
+    background: #4a4a4a;
+    border-color: #666;
+  }
+  
+  .set-row {
+    background: #505050;
+    border-color: #666;
+  }
+  
+  .hitloc-results,
+  .weapon-damage-results {
+    background: #454545;
+    border-color: #666;
+    color: #e0e0e0;
+  }
+  
+  .hitloc-result-item,
+  .damage-result-item {
+    background: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+}
+
+/* Print styles (hide interactive elements) */
+@media print {
+  .ore-analysis-panel {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+  
+  .analysis-header {
+    background: #8b0000 !important;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+  
+  .analysis-content {
+    display: block !important;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .calc-damage-btn,
+  .calc-hitloc-btn,
+  .calculate-all-btn,
+  .calculate-weapon-damage-btn,
+  .hitloc-inputs,
+  .weapon-inputs {
+    display: none;
+  }
+}
+
+/* Accessibility improvements */
+.calc-damage-btn:focus,
+.calc-hitloc-btn:focus,
+.calculate-all-btn:focus,
+.calculate-weapon-damage-btn:focus {
+  outline: 2px solid #8b0000;
+  outline-offset: 2px;
+}
+
+.analysis-header:focus {
+  outline: 2px solid white;
+  outline-offset: -2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ore-analysis-panel {
+    border-width: 3px;
+  }
+  
+  .analysis-header {
+    font-weight: bold;
+  }
+  
+  .calc-damage-btn,
+  .calc-hitloc-btn,
+  .calculate-all-btn,
+  .calculate-weapon-damage-btn {
+    border: 2px solid currentColor;
+    font-weight: bold;
+  }
+}
+/* =================== ENHANCED ORE SYSTEM CSS =================== */
+
+/* Context Menu System */
+.ore-context-menu {
+  position: fixed;
+  background: white;
+  border: 2px solid #8b0000;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-family: 'New Rocker', cursive;
+  min-width: 200px;
+  z-index: 10000;
+  overflow: hidden;
+  user-select: none;
+}
+
+.ore-context-menu .menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s ease;
+  font-size: 12px;
+  position: relative;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.ore-context-menu .menu-item:hover {
+  background: #f0f0f0;
+}
+
+.ore-context-menu .menu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ore-context-menu .menu-item.disabled:hover {
+  background: white;
+}
+
+.ore-context-menu .menu-item i {
+  width: 16px;
+  text-align: center;
+  color: #8b0000;
+  flex-shrink: 0;
+}
+
+.ore-context-menu .submenu-arrow {
+  margin-left: auto;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.ore-context-menu .menu-separator {
+  height: 1px;
+  background: #ddd;
+  margin: 4px 0;
+}
+
+.ore-context-menu.submenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  border-left: none;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: -1px;
+}
+
+/* Enhanced Set Styling */
+.ore-set-roll.enhanced {
+  position: relative;
+  cursor: context-menu;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.ore-set-roll.enhanced:hover {
+  border-color: #8b0000;
+  background: rgba(139, 0, 0, 0.05);
+  transform: scale(1.02);
+}
+
+.ore-set-roll.set-modified {
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  animation: setModifiedPulse 0.3s ease;
+}
+
+@keyframes setModifiedPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Set Modifiers Display */
+.set-modifiers {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: flex;
+  gap: 2px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.set-modifier-indicator {
+  background: rgba(139, 0, 0, 0.9);
+  color: white;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  white-space: nowrap;
+}
+
+.set-modifier-indicator.master-indicator {
+  background: rgba(255, 193, 7, 0.9);
+  color: #333;
+}
+
+.set-modifier-indicator.gobble-indicator {
+  background: rgba(76, 175, 80, 0.9);
+  color: white;
+}
+
+/* Master Dice Styling */
+.ore-single-roll.master {
+  border: 2px solid #ffc107;
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+  position: relative;
+}
+
+.ore-single-roll.master.consumed {
+  border-color: #666;
+  box-shadow: none;
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.ore-single-roll.master.consumed::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+}
+
+/* Enhanced Results Panel */
+.ore-results-panel {
+  background: #ffffff;
+  border: 2px solid #8b0000;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-family: 'New Rocker', cursive;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(139, 0, 0, 0.15);
+}
+
+.ore-results-panel .results-header {
+  background: linear-gradient(135deg, #8b0000 0%, #a30000 100%);
+  color: white;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  border-bottom: 1px solid #5a0000;
+}
+
+.ore-results-panel .results-header small {
+  margin-left: auto;
+  opacity: 0.8;
+  font-size: 10px;
+}
+
+.ore-results-panel .results-header:hover {
+  background: #5a0000;
+}
+
+.ore-results-panel .results-header .toggle-icon {
+  transition: transform 0.2s ease;
+  font-size: 10px;
+}
+
+.ore-results-panel.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.ore-results-panel .results-content {
+  display: none;
+  padding: 12px;
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+}
+
+.ore-results-panel.expanded .results-content {
+  display: block;
+}
+
+.ore-results-panel .results-summary {
+  text-align: center;
+  padding: 8px;
+  background: #f0f7ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  color: #2c5282;
+  font-weight: bold;
+}
+
+.ore-results-panel .sets-results {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ore-results-panel .set-result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #ffffff;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 11px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.ore-results-panel .set-notation {
+  font-weight: bold;
+  color: #8b0000;
+  min-width: 35px;
+}
+
+.ore-results-panel .damage-result {
+  color: #d32f2f;
+  font-weight: bold;
+  flex: 1;
+}
+
+.ore-results-panel .damage-result.damage-modified {
+  background: rgba(76, 175, 80, 0.2);
+  padding: 2px 4px;
+  border-radius: 2px;
+  animation: damageHighlight 0.3s ease;
+}
+
+@keyframes damageHighlight {
+  0% { background: rgba(76, 175, 80, 0.5); }
+  100% { background: rgba(76, 175, 80, 0.2); }
+}
+
+.ore-results-panel .hitloc-result {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.ore-results-panel .set-actions {
+  margin-left: auto;
+}
+
+.ore-results-panel .context-hint {
+  color: #666;
+  font-style: italic;
+  font-size: 9px;
+}
+
+.ore-results-panel .sequences-summary {
+  text-align: center;
+  padding: 4px;
+  font-size: 11px;
+  color: #666;
+  background: #e8f5e8;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+.ore-results-panel .target-info {
+  text-align: center;
+  padding: 4px;
+  font-size: 11px;
+  color: #666;
+  background: #fff3cd;
+  border-radius: 3px;
+  margin-top: 4px;
+}
+
+/* Damage Application Messages */
+.damage-application {
+  background: rgba(139, 0, 0, 0.1);
+  border: 1px solid #8b0000;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 4px 0;
+  font-family: 'New Rocker', cursive;
+  font-size: 12px;
+}
+
+.damage-application strong {
+  color: #8b0000;
+}
+
+/* Enhanced hover effects for sets */
+.ore-set-roll.enhanced::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #8b0000, #5a0000);
+  border-radius: 6px;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.2s ease;
+}
+
+.ore-set-roll.enhanced:hover::before {
+  opacity: 0.1;
+}
+
+/* Context menu hover states */
+.ore-context-menu .menu-item:first-child {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.ore-context-menu .menu-item:last-child {
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+/* Loading states for damage calculation */
+.damage-calculating {
+  position: relative;
+  opacity: 0.7;
+}
+
+.damage-calculating::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #8b0000;
+  border-radius: 50%;
+  animation: damageSpinner 1s linear infinite;
+}
+
+@keyframes damageSpinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .ore-context-menu {
+    min-width: 180px;
+    font-size: 11px;
+  }
+  
+  .ore-context-menu .menu-item {
+    padding: 6px 10px;
+  }
+  
+  .ore-results-panel .set-result {
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+    align-items: stretch;
+  }
+  
+  .ore-results-panel .context-hint {
+    display: none;
+  }
+  
+  .ore-results-panel .results-header small {
+    display: none;
+  }
+  
+  .set-modifiers {
+    top: -6px;
+    right: -6px;
+  }
+  
+  .set-modifier-indicator {
+    font-size: 8px;
+    padding: 1px 3px;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .ore-context-menu {
+    border-width: 3px;
+  }
+  
+  .ore-context-menu .menu-item {
+    font-weight: bold;
+  }
+  
+  .set-modifier-indicator {
+    border: 1px solid #000;
+    font-weight: bold;
+  }
+  
+  .ore-set-roll.enhanced:hover {
+    border-width: 3px;
+  }
+}
+
+/* Accessibility improvements */
+.ore-context-menu .menu-item:focus {
+  outline: 2px solid #8b0000;
+  outline-offset: -2px;
+  background: #f0f0f0;
+}
+
+.ore-set-roll.enhanced:focus {
+  outline: 2px solid #8b0000;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .ore-context-menu {
+    display: none !important;
+  }
+  
+  .set-modifiers {
+    position: static;
+    display: inline-flex;
+    margin-left: 5px;
+  }
+  
+  .context-hint {
+    display: none;
+  }
+}
+
+/* Dark mode support */
+/* @media (prefers-color-scheme: dark) {
+  .ore-context-menu {
+    background: #2d2d2d;
+    border-color: #8b0000;
+    color: #e0e0e0;
+  }
+  
+  .ore-context-menu .menu-item:hover {
+    background: #404040;
+  }
+  
+  .ore-results-panel {
+    background: #2d2d2d;
+  }
+  
+  .ore-results-panel .results-content {
+    background: #404040;
+  }
+  
+  .ore-results-panel .set-result {
+    background: #2d2d2d;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+  
+  .damage-application {
+    background: rgba(139, 0, 0, 0.2);
+    color: #e0e0e0;
+  }
+} */
+
+/* Animation for context menu appearance */
+.ore-context-menu {
+  animation: contextMenuSlideIn 0.15s ease-out;
+}
+
+@keyframes contextMenuSlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Enhanced visual feedback for successful actions */
+.action-success {
+  animation: successFlash 0.5s ease;
+}
+
+@keyframes successFlash {
+  0%, 100% { background: transparent; }
+  50% { background: rgba(76, 175, 80, 0.3); }
+}
+
+/* Error states */
+.action-error {
+  animation: errorShake 0.5s ease;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Tooltip-like messages for set modifiers */
+.set-modifier-indicator:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  /* background: rgba(0,0,0,0.8); */
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 2px;
+}

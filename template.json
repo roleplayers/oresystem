@@ -85,10 +85,12 @@
       "damage": {
         "main": {
           "formula": "width",
+          "modifier": 0,
           "type": "killing"
         },
         "alt": {
           "formula": "",
+          "modifier": 0,
           "type": ""
         },
         "additional": []

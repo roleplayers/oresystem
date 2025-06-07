@@ -63,109 +63,131 @@ export class ReignActorSheet extends ActorSheet {
   /**
    * Organize and classify Items for Character sheets.
    */
-  _prepareItems(context) {
-    try {
-      // Initialize containers.
-      const stats = [];
-      const skills = [];
-      const powers = [];
-      const hitlocs = [];
-      const weapons = [];
+  // Adicione este código na função _prepareItems do actor-sheet.mjs:
 
-      // Iterate through items, allocating to containers then adding the poolTotal flag
-      for (let i of context.items) {
-        i.img = i.img || DEFAULT_TOKEN;
-        
-        // Append to appropriate arrays.
-        if (i.type === 'stat') {
-          stats.push(i);
-        } else if (i.type === 'skill') {
-          skills.push(i);
-        } else if (i.type === 'power') {
-          powers.push(i);
-        } else if (i.type === 'hitloc') {
-          hitlocs.push(i);
-        } else if (i.type === 'weapon') {
-          weapons.push(i);
-        }
+_prepareItems(context) {
+  try {
+    // Initialize containers.
+    const stats = [];
+    const skills = [];
+    const powers = [];
+    const hitlocs = [];
+    const weapons = [];
 
-        const itemSystem = i.system;
-        if (!i.flags.oresystem) {
-          i.flags.oresystem = {}
-        }
-        if (i.type == "skill") {
-          let linkedStat = context.items.find(x => x.name == itemSystem.stat)
-          if (linkedStat) {
-            i.flags.oresystem["poolTotal"] = (itemSystem.d + linkedStat.system.d) + "d/" + (itemSystem.ed + linkedStat.system.ed) + "e (" + itemSystem.ed_set + ")/" + (itemSystem.md + linkedStat.system.md) + "m";
+    // Iterate through items, allocating to containers then adding the poolTotal flag
+    for (let i of context.items) {
+      i.img = i.img || DEFAULT_TOKEN;
+      
+      // Append to appropriate arrays.
+      if (i.type === 'stat') {
+        stats.push(i);
+      } else if (i.type === 'skill') {
+        skills.push(i);
+      } else if (i.type === 'power') {
+        powers.push(i);
+      } else if (i.type === 'hitloc') {
+        hitlocs.push(i);
+      } else if (i.type === 'weapon') {
+        // Add damage preview for weapons
+        const weaponItem = this.actor.items.get(i._id);
+        if (weaponItem && weaponItem.getPreviewDamageString) {
+          i.damagePreview = weaponItem.getPreviewDamageString();
+        } else {
+          // Fallback calculation
+          let damageStr = i.system.damage.main.formula || 'width';
+          if (i.system.damage.main.modifier && i.system.damage.main.modifier !== 0) {
+            damageStr += (i.system.damage.main.modifier > 0 ? '+' : '') + i.system.damage.main.modifier;
           }
-        } else {
-          i.flags.oresystem["poolTotal"] = (itemSystem.d + "d/" + itemSystem.ed + "e (" + itemSystem.ed_set + ")/" + itemSystem.md + "m");
+          i.damagePreview = `${damageStr} ${i.system.damage.main.type || 'killing'}`;
+          
+          if (i.system.damage.alt.formula) {
+            let altStr = i.system.damage.alt.formula;
+            if (i.system.damage.alt.modifier && i.system.damage.alt.modifier !== 0) {
+              altStr += (i.system.damage.alt.modifier > 0 ? '+' : '') + i.system.damage.alt.modifier;
+            }
+            i.damagePreview += ` + ${altStr} ${i.system.damage.alt.type}`;
+          }
         }
+        weapons.push(i);
       }
 
-      // Sort stats by sort field, then by name
-      stats.sort((a, b) => {
-        const sortA = a.system.sort || 0;
-        const sortB = b.system.sort || 0;
-        if (sortA !== sortB) {
-          return sortA - sortB;
+      const itemSystem = i.system;
+      if (!i.flags.oresystem) {
+        i.flags.oresystem = {}
+      }
+      if (i.type == "skill") {
+        let linkedStat = context.items.find(x => x.name == itemSystem.stat)
+        if (linkedStat) {
+          i.flags.oresystem["poolTotal"] = (itemSystem.d + linkedStat.system.d) + "d/" + (itemSystem.ed + linkedStat.system.ed) + "e (" + itemSystem.ed_set + ")/" + (itemSystem.md + linkedStat.system.md) + "m";
         }
-        return a.name.localeCompare(b.name);
-      });
-
-      // split skills by base stat
-      let sortedSkills = {};
-      let myStatList = [];
-      for (let i of stats) {
-        myStatList.push(i.name)
+      } else {
+        i.flags.oresystem["poolTotal"] = (itemSystem.d + "d/" + itemSystem.ed + "e (" + itemSystem.ed_set + ")/" + itemSystem.md + "m");
       }
-      myStatList.push("Any")
-      for (let i of myStatList) {
-        sortedSkills[i] = []
-      }
-      for (let i of skills) {
-        if (!myStatList.includes(i.system.stat) && i.system.stat) {
-          myStatList.push(i.system.stat)
-          sortedSkills[i.system.stat] = [];
-        }
-        if (!i.system.stat) {
-          sortedSkills["Any"].push(i);
-        } else {
-          sortedSkills[i.system.stat].push(i);
-        }
-      }
-
-      // Dividir stats em duas colunas (apenas os stats reais, não "Any")
-      const realStatNames = stats.map(s => s.name); // Só os stats ordenados
-      const midPoint = Math.ceil(realStatNames.length / 2);
-      const leftColumnStats = realStatNames.slice(0, midPoint);
-      const rightColumnStats = realStatNames.slice(midPoint);
-      
-      // Se existem skills sem stat ("Any"), adiciona na segunda coluna
-      if (sortedSkills["Any"] && sortedSkills["Any"].length > 0) {
-        rightColumnStats.push("Any");
-      }
-
-      // sort hitlocs by location
-      hitlocs.sort((a, b) => (a.system.noEnd < b.system.noEnd) ? 1 : -1)
-
-      // sort weapons by name
-      weapons.sort((a, b) => a.name.localeCompare(b.name));
-
-      // Assign and return
-      context.stats = stats;
-      context.skills = skills;
-      context.sortedSkills = sortedSkills;
-      context.leftColumnStats = leftColumnStats;
-      context.rightColumnStats = rightColumnStats;
-      context.powers = powers;
-      context.hitlocs = hitlocs;
-      context.weapons = weapons;
-      
-    } catch (error) {
-      console.error("Error in _prepareItems:", error);
     }
+
+    // Sort stats by sort field, then by name
+    stats.sort((a, b) => {
+      const sortA = a.system.sort || 0;
+      const sortB = b.system.sort || 0;
+      if (sortA !== sortB) {
+        return sortA - sortB;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    // split skills by base stat
+    let sortedSkills = {};
+    let myStatList = [];
+    for (let i of stats) {
+      myStatList.push(i.name)
+    }
+    myStatList.push("Any")
+    for (let i of myStatList) {
+      sortedSkills[i] = []
+    }
+    for (let i of skills) {
+      if (!myStatList.includes(i.system.stat) && i.system.stat) {
+        myStatList.push(i.system.stat)
+        sortedSkills[i.system.stat] = [];
+      }
+      if (!i.system.stat) {
+        sortedSkills["Any"].push(i);
+      } else {
+        sortedSkills[i.system.stat].push(i);
+      }
+    }
+
+    // Dividir stats em duas colunas (apenas os stats reais, não "Any")
+    const realStatNames = stats.map(s => s.name); // Só os stats ordenados
+    const midPoint = Math.ceil(realStatNames.length / 2);
+    const leftColumnStats = realStatNames.slice(0, midPoint);
+    const rightColumnStats = realStatNames.slice(midPoint);
+    
+    // Se existem skills sem stat ("Any"), adiciona na segunda coluna
+    if (sortedSkills["Any"] && sortedSkills["Any"].length > 0) {
+      rightColumnStats.push("Any");
+    }
+
+    // sort hitlocs by location
+    hitlocs.sort((a, b) => (a.system.noEnd < b.system.noEnd) ? 1 : -1)
+
+    // sort weapons by name
+    weapons.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Assign and return
+    context.stats = stats;
+    context.skills = skills;
+    context.sortedSkills = sortedSkills;
+    context.leftColumnStats = leftColumnStats;
+    context.rightColumnStats = rightColumnStats;
+    context.powers = powers;
+    context.hitlocs = hitlocs;
+    context.weapons = weapons;
+    
+  } catch (error) {
+    console.error("Error in _prepareItems:", error);
   }
+}
 
 /** @override */
   activateListeners(html) {

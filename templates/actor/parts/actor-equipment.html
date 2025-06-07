@@ -72,11 +72,19 @@
         </div>
 
         <div class="item-stats">
-          <div class="item-damage">
+            <div class="item-damage">
             <strong>Damage:</strong> 
-            {{weapon.system.damage.main.formula}} {{weapon.system.damage.main.type}}
+            {{weapon.system.damage.main.formula}}
+            {{#if weapon.system.damage.main.modifier}}
+              {{#if (gt weapon.system.damage.main.modifier 0)}}+{{weapon.system.damage.main.modifier}}{{else}}{{weapon.system.damage.main.modifier}}{{/if}}
+            {{/if}}
+            {{weapon.system.damage.main.type}}
             {{#if weapon.system.damage.alt.formula}}
-              + {{weapon.system.damage.alt.formula}} {{weapon.system.damage.alt.type}}
+              + {{weapon.system.damage.alt.formula}}
+              {{#if weapon.system.damage.alt.modifier}}
+                {{#if (gt weapon.system.damage.alt.modifier 0)}}+{{weapon.system.damage.alt.modifier}}{{else}}{{weapon.system.damage.alt.modifier}}{{/if}}
+              {{/if}}
+              {{weapon.system.damage.alt.type}}
             {{/if}}
           </div>
           

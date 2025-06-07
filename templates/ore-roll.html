@@ -2,9 +2,17 @@
     {{#if flavorText}}
     <div class="ore-flavor-text">{{flavorText}}</div>
     {{/if}}
+    
     <div class="ore-sets">
         {{#each sets}}
-        <div class="ore-set-roll" data-width="{{width}}" data-height="{{height}}">
+        <div class="ore-set-roll enhanced" 
+             data-width="{{width}}" 
+             data-height="{{height}}"
+             data-original-width="{{width}}"
+             data-set-index="{{@index}}"
+             data-applied-master="0"
+             data-applied-gobble="0"
+             title="Right-click for options">
             {{#each rollsInSet}}
             <div class="ore-single-roll in-set" data-value="{{this}}"
                 style="background-image: url('systems/oresystem/images/dice/d10_{{this}}.png')">
@@ -13,6 +21,7 @@
         </div>
         {{/each}}
     </div>
+    
     <div class="ore-loose-dice">
         {{#each looseDice}}
         <div class="ore-single-roll loose" data-value="{{this}}"
@@ -20,14 +29,410 @@
         </div>
         {{/each}}
     </div>
+    
     {{#if masterDice}}
-    <p>Master Dice:</p>
-    <div class="ore-loose-dice">
-        {{#each masterDice}}
-        <div class="ore-single-roll loose" data-value="{{this}}"
-            style="background-image: url('systems/oresystem/images/dice/d10_loose_{{this}}.png')">
+    <div class="ore-master-section">
+        <p><strong>Master Dice:</strong></p>
+        <div class="ore-loose-dice">
+            {{#each masterDice}}
+            <div class="ore-single-roll master" data-value="{{this}}"
+                style="background-image: url('systems/oresystem/images/dice/d10_{{this}}.png')"
+                title="Available for use">
+            </div>
+            {{/each}}
         </div>
-        {{/each}}
+    </div>
+    {{/if}}
+
+    <!-- Enhanced Results Panel -->
+    {{#if (or sets.length sequences.length weaponContext targetContext)}}
+    <div class="ore-results-panel">
+        <div class="results-header">
+            <i class="fas fa-calculator"></i>
+            <span>Results</span>
+            <small>(Right-click sets for options)</small>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+        </div>
+        
+        <div class="results-content">
+            
+            <!-- Quick Summary -->
+            {{#if sets.length}}
+            <div class="results-summary">
+                <strong>{{#if (gt sets.length 1)}}Best: {{/if}}{{sets.0.width}}×{{sets.0.height}}</strong>
+                {{#if (gt sets.length 1)}} • {{sets.length}} sets{{/if}}
+                {{#if looseDice.length}} • {{looseDice.length}} loose{{/if}}
+                {{#if sequences.length}} • {{sequences.length}} sequences{{/if}}
+                {{#if masterDice.length}} • {{masterDice.length}} master{{/if}}
+            </div>
+            {{/if}}
+
+            <!-- Enhanced Set Results with Damage -->
+            {{#if sets.length}}
+            <div class="sets-results">
+                {{#each sets}}
+                <div class="set-result" data-set-index="{{@index}}">
+                    <span class="set-notation">{{width}}×{{height}}</span>
+                    {{#if ../weaponContext}}
+                        <span class="damage-result">{{../weaponContext.calculatedDamages.[this.index]}}</span>
+                    {{/if}}
+                    {{#if ../hitlocResults.[this.height]}}
+                        <span class="hitloc-result">→ {{../hitlocResults.[this.height]}}</span>
+                    {{/if}}
+                    <span class="set-actions">
+                        <small class="context-hint">Right-click set for options</small>
+                    </span>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            <!-- Sequences -->
+            {{#if sequences.length}}
+            <div class="sequences-summary">
+                <strong>Sequences:</strong>
+                {{#each sequences}}
+                    {{low}}→{{high}} ({{length}}){{#unless @last}}, {{/unless}}
+                {{/each}}
+            </div>
+            {{/if}}
+
+            <!-- Target Information -->
+            {{#if targetContext}}
+            <div class="target-info">
+                <strong>Target:</strong> {{targetContext.name}}
+                {{#if targetContext.hitlocs.length}}
+                    ({{targetContext.hitlocs.length}} hit locations)
+                {{/if}}
+            </div>
+            {{/if}}
+
+        </div>
     </div>
     {{/if}}
 </div>
+
+<style>
+/* Enhanced Set Styling */
+.ore-set-roll.enhanced {
+    position: relative;
+    cursor: context-menu;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.ore-set-roll.enhanced:hover {
+    border-color: #8b0000;
+    background: rgba(139, 0, 0, 0.05);
+    transform: scale(1.02);
+}
+
+.ore-set-roll.set-modified {
+    border-color: #4caf50;
+    background: rgba(76, 175, 80, 0.1);
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Set Modifiers Display */
+.set-modifiers {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    display: flex;
+    gap: 2px;
+    z-index: 10;
+}
+
+.set-modifier-indicator {
+    background: rgba(139, 0, 0, 0.9);
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.master-indicator {
+    background: rgba(255, 193, 7, 0.9);
+    color: #333;
+}
+
+.gobble-indicator {
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+}
+
+/* Master Dice Styling */
+.ore-single-roll.master {
+    border: 2px solid #ffc107;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+.ore-single-roll.master.consumed {
+    border-color: #666;
+    box-shadow: none;
+    filter: grayscale(100%);
+}
+
+/* Context Menu Styling */
+.ore-context-menu {
+    background: white;
+    border: 2px solid #8b0000;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-family: 'New Rocker', cursive;
+    min-width: 200px;
+    z-index: 10000;
+    overflow: hidden;
+}
+
+.menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease;
+    font-size: 12px;
+    position: relative;
+}
+
+.menu-item:hover {
+    background: #f0f0f0;
+}
+
+.menu-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.menu-item.disabled:hover {
+    background: white;
+}
+
+.menu-item i {
+    width: 16px;
+    text-align: center;
+    color: #8b0000;
+}
+
+.submenu-arrow {
+    margin-left: auto;
+    color: #666;
+}
+
+.menu-separator {
+    height: 1px;
+    background: #ddd;
+    margin: 4px 0;
+}
+
+.submenu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* Enhanced Results Panel */
+.ore-results-panel {
+    background: #f8f9fa;
+    border: 1px solid #8b0000;
+    border-radius: 4px;
+    margin-top: 8px;
+    font-family: 'New Rocker', cursive;
+    overflow: hidden;
+}
+
+.results-header {
+    background: #8b0000;
+    color: white;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+}
+
+.results-header small {
+    margin-left: auto;
+    opacity: 0.8;
+    font-size: 10px;
+}
+
+.results-header:hover {
+    background: #5a0000;
+}
+
+.results-header .toggle-icon {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+    font-size: 10px;
+}
+
+.ore-results-panel.expanded .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.results-content {
+    display: none;
+    padding: 8px;
+    background: white;
+}
+
+.ore-results-panel.expanded .results-content {
+    display: block;
+}
+
+.results-summary {
+    text-align: center;
+    padding: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #333;
+}
+
+.sets-results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.set-result {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.set-notation {
+    font-weight: bold;
+    color: #8b0000;
+    min-width: 35px;
+}
+
+.damage-result {
+    color: #d32f2f;
+    font-weight: bold;
+    flex: 1;
+}
+
+.damage-result.damage-modified {
+    background: rgba(76, 175, 80, 0.2);
+    padding: 2px 4px;
+    border-radius: 2px;
+    animation: highlight 0.3s ease;
+}
+
+@keyframes highlight {
+    0% { background: rgba(76, 175, 80, 0.5); }
+    100% { background: rgba(76, 175, 80, 0.2); }
+}
+
+.hitloc-result {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.set-actions {
+    margin-left: auto;
+}
+
+.context-hint {
+    color: #666;
+    font-style: italic;
+    font-size: 9px;
+}
+
+.sequences-summary {
+    text-align: center;
+    padding: 4px;
+    font-size: 11px;
+    color: #666;
+    background: #e8f5e8;
+    border-radius: 3px;
+    margin-top: 4px;
+}
+
+.target-info {
+    text-align: center;
+    padding: 4px;
+    font-size: 11px;
+    color: #666;
+    background: #fff3cd;
+    border-radius: 3px;
+    margin-top: 4px;
+}
+
+/* Damage Application Message */
+.damage-application {
+    background: rgba(139, 0, 0, 0.1);
+    border: 1px solid #8b0000;
+    border-radius: 4px;
+    padding: 8px;
+    margin: 4px 0;
+    font-family: 'New Rocker', cursive;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .ore-context-menu {
+        min-width: 180px;
+        font-size: 11px;
+    }
+    
+    .menu-item {
+        padding: 6px 10px;
+    }
+    
+    .set-result {
+        flex-direction: column;
+        gap: 2px;
+        text-align: center;
+        align-items: stretch;
+    }
+    
+    .context-hint {
+        display: none;
+    }
+    
+    .results-header small {
+        display: none;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .ore-context-menu {
+        border-width: 3px;
+    }
+    
+    .menu-item {
+        font-weight: bold;
+    }
+    
+    .set-modifier-indicator {
+        border: 1px solid #000;
+        font-weight: bold;
+    }
+}
+</style>
