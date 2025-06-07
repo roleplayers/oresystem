@@ -1644,3 +1644,427 @@ input[type="text"]:focus, input[type="number"]:focus, textarea:focus, select:foc
     gap: 5px;
   }
 }
+
+
+/* =================== ATTRIBUTES NEW LAYOUT CSS =================== */
+.attributes-container-new {
+  width: 100%;
+}
+
+.attributes-two-columns-new {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.attributes-column-new {
+  min-width: 0;
+}
+
+.attributes-column-new .items-list {
+  margin-bottom: 20px;
+}
+
+/* Override conflicting styles for new layout */
+.character-main-content .attributes-container-new .oresystem .items-list .item {
+  position: relative;
+  align-items: center;
+  padding: 0 2px;
+  border-bottom: 1px solid #c9c7b8;
+  padding-right: 140px; /* Espaço maior para mais controles */
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item:last-child {
+  border-bottom: none;
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls {
+  display: flex;
+  flex: 0 0 130px; /* Largura maior para mais botões */
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 3px;
+  padding: 2px;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item:hover .item-controls {
+  opacity: 1;
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls a {
+  font-size: 12px;
+  text-align: center;
+  margin: 0 2px;
+  color: #666;
+  transition: color 0.2s ease;
+  padding: 2px 3px;
+  border-radius: 2px;
+  min-width: 18px;
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls a:hover {
+  color: #8b0000;
+  background: rgba(139,0,0,0.1);
+}
+
+/* Cores específicas para setas */
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls .stat-move-up:hover {
+  color: #2e7d32;
+  background: rgba(46,125,50,0.1);
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-controls .stat-move-down:hover {
+  color: #1565c0;
+  background: rgba(21,101,192,0.1);
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .item-name {
+  flex: 2;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-align: left;
+  align-items: center;
+  display: flex;
+  padding-right: 10px; /* Espaço extra para segurança */
+}
+
+/* Skills não precisam das setas, só stats */
+.character-main-content .attributes-container-new .oresystem .items-list .skill-row .item-controls {
+  flex: 0 0 100px; /* Largura menor para skills */
+}
+
+.character-main-content .attributes-container-new .oresystem .items-list .skill-row {
+  padding-right: 110px; /* Padding menor para skills */
+}
+
+/* Responsive para novo layout */
+@media (max-width: 768px) {
+  .attributes-two-columns-new {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .character-main-content .attributes-container-new .oresystem .items-list .item-controls a {
+    font-size: 11px;
+    padding: 1px 2px;
+    min-width: 16px;
+  }
+}
+
+/* =================== ORE ENHANCED ANALYSIS CSS =================== */
+
+/* Analysis Panel Scrollbar */
+.analysis-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.analysis-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.analysis-content::-webkit-scrollbar-thumb {
+  background: #8b0000;
+  border-radius: 3px;
+}
+
+/* Enhanced set visualization */
+.ore-set-roll {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.ore-set-roll:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(139, 0, 0, 0.3);
+}
+
+.ore-set-roll::after {
+  content: attr(data-width) "×" attr(data-height);
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(139, 0, 0, 0.9);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  font-family: 'New Rocker', cursive;
+}
+
+.ore-set-roll:hover::after {
+  opacity: 1;
+}
+
+/* Button animations */
+.calc-damage-btn,
+.calc-hitloc-btn,
+.calculate-all-btn,
+.calculate-weapon-damage-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.calc-damage-btn::before,
+.calc-hitloc-btn::before,
+.calculate-all-btn::before,
+.calculate-weapon-damage-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.calc-damage-btn:hover::before,
+.calc-hitloc-btn:hover::before,
+.calculate-all-btn:hover::before,
+.calculate-weapon-damage-btn:hover::before {
+  left: 100%;
+}
+
+/* Result animations */
+.hitloc-result-item,
+.damage-result-item {
+  animation: slideIn 0.3s ease-out;
+  transform-origin: left center;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Sequence styling enhancements */
+.sequence-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.sequence-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #4caf50, #2e7d32);
+  border-radius: 0 2px 2px 0;
+}
+
+/* Loading states */
+.calculating {
+  position: relative;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.calculating::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #8b0000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 480px) {
+  .ore-analysis-panel {
+    margin: 5px -5px; /* Extend to edges on mobile */
+    border-radius: 0;
+  }
+  
+  .analysis-header {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .analysis-content {
+    padding: 10px;
+    max-height: 250px;
+  }
+  
+  .analysis-section {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .analysis-section h4 {
+    font-size: 12px;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  
+  .set-row {
+    padding: 6px;
+  }
+  
+  .set-notation {
+    font-size: 14px;
+  }
+  
+  .set-actions {
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  
+  .calc-damage-btn,
+  .calc-hitloc-btn {
+    padding: 3px 6px;
+    font-size: 10px;
+    min-width: auto;
+  }
+  
+  .hitloc-inputs,
+  .weapon-inputs {
+    gap: 4px;
+  }
+  
+  .target-dropdown,
+  .weapon-dropdown {
+    font-size: 12px;
+    min-width: 120px;
+  }
+  
+  .calculate-all-btn,
+  .calculate-weapon-damage-btn {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Dark mode support (if implemented) */
+@media (prefers-color-scheme: dark) {
+  .ore-analysis-panel {
+    background: rgba(45, 45, 45, 0.95);
+    border-color: #8b0000;
+  }
+  
+  .analysis-section {
+    background: rgba(60, 60, 60, 0.8);
+    border-color: #555;
+  }
+  
+  .summary-item {
+    background: #4a4a4a;
+    border-color: #666;
+  }
+  
+  .set-row {
+    background: #505050;
+    border-color: #666;
+  }
+  
+  .hitloc-results,
+  .weapon-damage-results {
+    background: #454545;
+    border-color: #666;
+    color: #e0e0e0;
+  }
+  
+  .hitloc-result-item,
+  .damage-result-item {
+    background: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+}
+
+/* Print styles (hide interactive elements) */
+@media print {
+  .ore-analysis-panel {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+  
+  .analysis-header {
+    background: #8b0000 !important;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+  
+  .analysis-content {
+    display: block !important;
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .calc-damage-btn,
+  .calc-hitloc-btn,
+  .calculate-all-btn,
+  .calculate-weapon-damage-btn,
+  .hitloc-inputs,
+  .weapon-inputs {
+    display: none;
+  }
+}
+
+/* Accessibility improvements */
+.calc-damage-btn:focus,
+.calc-hitloc-btn:focus,
+.calculate-all-btn:focus,
+.calculate-weapon-damage-btn:focus {
+  outline: 2px solid #8b0000;
+  outline-offset: 2px;
+}
+
+.analysis-header:focus {
+  outline: 2px solid white;
+  outline-offset: -2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ore-analysis-panel {
+    border-width: 3px;
+  }
+  
+  .analysis-header {
+    font-weight: bold;
+  }
+  
+  .calc-damage-btn,
+  .calc-hitloc-btn,
+  .calculate-all-btn,
+  .calculate-weapon-damage-btn {
+    border: 2px solid currentColor;
+    font-weight: bold;
+  }
+}

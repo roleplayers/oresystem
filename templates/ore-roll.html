@@ -2,6 +2,7 @@
     {{#if flavorText}}
     <div class="ore-flavor-text">{{flavorText}}</div>
     {{/if}}
+    
     <div class="ore-sets">
         {{#each sets}}
         <div class="ore-set-roll" data-width="{{width}}" data-height="{{height}}">
@@ -13,6 +14,7 @@
         </div>
         {{/each}}
     </div>
+    
     <div class="ore-loose-dice">
         {{#each looseDice}}
         <div class="ore-single-roll loose" data-value="{{this}}"
@@ -20,14 +22,229 @@
         </div>
         {{/each}}
     </div>
+    
     {{#if masterDice}}
-    <p>Master Dice:</p>
-    <div class="ore-loose-dice">
-        {{#each masterDice}}
-        <div class="ore-single-roll loose" data-value="{{this}}"
-            style="background-image: url('systems/oresystem/images/dice/d10_loose_{{this}}.png')">
+    <div class="ore-master-section">
+        <p><strong>Master Dice:</strong></p>
+        <div class="ore-loose-dice">
+            {{#each masterDice}}
+            <div class="ore-single-roll loose" data-value="{{this}}"
+                style="background-image: url('systems/oresystem/images/dice/d10_loose_{{this}}.png')">
+            </div>
+            {{/each}}
         </div>
-        {{/each}}
+    </div>
+    {{/if}}
+
+    <!-- Simple Results Panel -->
+    {{#if (or sets.length sequences.length weaponContext targetContext)}}
+    <div class="ore-results-panel">
+        <div class="results-header">
+            <i class="fas fa-calculator"></i>
+            <span>Results</span>
+            <i class="fas fa-chevron-down toggle-icon"></i>
+        </div>
+        
+        <div class="results-content">
+            
+            <!-- Quick Summary -->
+            {{#if sets.length}}
+            <div class="results-summary">
+                <strong>{{#if (gt sets.length 1)}}Best: {{/if}}{{sets.0.width}}×{{sets.0.height}}</strong>
+                {{#if (gt sets.length 1)}} • {{sets.length}} sets{{/if}}
+                {{#if looseDice.length}} • {{looseDice.length}} loose{{/if}}
+                {{#if sequences.length}} • {{sequences.length}} sequences{{/if}}
+            </div>
+            {{/if}}
+
+            <!-- Weapon + Hit Location Results -->
+            {{#if sets.length}}
+            <div class="sets-results">
+                {{#each sets}}
+                <div class="set-result">
+                    <span class="set-notation">{{width}}×{{height}}</span>
+                    {{#if ../weaponContext}}
+                        <span class="damage-result">{{../weaponContext.calculatedDamages.[this.index]}}</span>
+                    {{/if}}
+                    {{#if ../hitlocResults.[this.height]}}
+                        <span class="hitloc-result">→ {{../hitlocResults.[this.height]}}</span>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            <!-- Sequences -->
+            {{#if sequences.length}}
+            <div class="sequences-summary">
+                <strong>Sequences:</strong>
+                {{#each sequences}}
+                    {{low}}→{{high}} ({{length}}){{#unless @last}}, {{/unless}}
+                {{/each}}
+            </div>
+            {{/if}}
+
+        </div>
     </div>
     {{/if}}
 </div>
+
+<style>
+.ore-results-panel {
+    background: #f8f9fa;
+    border: 1px solid #8b0000;
+    border-radius: 4px;
+    margin-top: 8px;
+    font-family: 'New Rocker', cursive;
+    overflow: hidden;
+}
+
+.results-header {
+    background: #8b0000;
+    color: white;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
+}
+
+.results-header:hover {
+    background: #5a0000;
+}
+
+.results-header .toggle-icon {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+    font-size: 10px;
+}
+
+.ore-results-panel.expanded .toggle-icon {
+    transform: rotate(180deg);
+}
+
+.results-content {
+    display: none;
+    padding: 8px;
+    background: white;
+}
+
+.ore-results-panel.expanded .results-content {
+    display: block;
+}
+
+.results-summary {
+    text-align: center;
+    padding: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #333;
+}
+
+.sets-results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.set-result {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.set-notation {
+    font-weight: bold;
+    color: #8b0000;
+    min-width: 35px;
+}
+
+.damage-result {
+    color: #d32f2f;
+    font-weight: bold;
+    flex: 1;
+}
+
+.hitloc-result {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.sequences-summary {
+    text-align: center;
+    padding: 4px;
+    font-size: 11px;
+    color: #666;
+    background: #e8f5e8;
+    border-radius: 3px;
+    margin-top: 4px;
+}
+
+/* Hover effects for sets */
+.ore-set-roll {
+    position: relative;
+    transition: transform 0.1s ease;
+}
+
+.ore-set-roll:hover {
+    transform: scale(1.03);
+}
+
+.ore-set-roll::after {
+    content: attr(data-width) "×" attr(data-height);
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(139, 0, 0, 0.9);
+    color: white;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-size: 8px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    font-family: 'New Rocker', cursive;
+    white-space: nowrap;
+}
+
+.ore-set-roll:hover::after {
+    opacity: 1;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .set-result {
+        flex-direction: column;
+        gap: 2px;
+        text-align: center;
+    }
+    
+    .set-notation,
+    .damage-result,
+    .hitloc-result {
+        text-align: center;
+    }
+}
+
+/* Clean override of any conflicting styles */
+.ore-results-panel,
+.ore-results-panel * {
+    box-sizing: border-box;
+}
+
+.ore-results-panel {
+    position: relative;
+    z-index: 1;
+}
+</style>

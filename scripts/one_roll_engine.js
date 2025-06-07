@@ -14,10 +14,12 @@ Hooks.on('chatMessage', (_, messageText, data) => {
 })
 
 /*
- * Toggle dashed outline of sets, when clicked
+ * Enhanced chat interactions
  */
 Hooks.on('renderChatLog', () => {
   const chatLog = $('#chat-log')
+  
+  // Original set and dice clicking
   chatLog.on('click', '.ore-set-roll', (event) => {
     event.preventDefault()
     const setsDiv = event.currentTarget
@@ -27,6 +29,7 @@ Hooks.on('renderChatLog', () => {
     }
     setsDiv.style.outline = setsDiv.style.outline === 'dashed' ? 'none' : 'dashed'
   })
+  
   chatLog.on('click', '.ore-single-roll.loose', (event) => {
     event.preventDefault()
     const looseDieDiv = event.currentTarget
@@ -44,6 +47,16 @@ Hooks.on('renderChatLog', () => {
       looseDieDiv.style.outline = looseDieDiv.style.outline === 'dashed' ? 'none' : 'dashed'
     }
   })
+
+  // Results panel toggle - FIXED
+  chatLog.on('click', '.results-header', (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const panel = event.currentTarget.closest('.ore-results-panel')
+    if (panel) {
+      panel.classList.toggle('expanded')
+    }
+  })
 })
 
 /**
@@ -53,6 +66,143 @@ const showDiceAnimation = async (roll) => {
   if (game.dice3d) {
     await game.dice3d.showForRoll(roll);
   }
+}
+
+/**
+ * Calculate sequences from dice results
+ * @param {Array} allDice - All dice values from the roll
+ * @returns {Array} Array of sequence objects
+ */
+const calculateSequences = (allDice) => {
+  const sequences = []
+  const uniqueValues = [...new Set(allDice)].sort((a, b) => a - b)
+  
+  let currentSequence = []
+  
+  for (let i = 0; i < uniqueValues.length; i++) {
+    const value = uniqueValues[i]
+    
+    if (currentSequence.length === 0 || value === currentSequence[currentSequence.length - 1] + 1) {
+      currentSequence.push(value)
+    } else {
+      if (currentSequence.length >= 4) {
+        sequences.push({
+          low: currentSequence[0],
+          high: currentSequence[currentSequence.length - 1],
+          length: currentSequence.length,
+          values: [...currentSequence]
+        })
+      }
+      currentSequence = [value]
+    }
+  }
+  
+  if (currentSequence.length >= 4) {
+    sequences.push({
+      low: currentSequence[0],
+      high: currentSequence[currentSequence.length - 1],
+      length: currentSequence.length,
+      values: [...currentSequence]
+    })
+  }
+  
+  return sequences
+}
+
+/**
+ * Auto-detect weapon from flavor text
+ * @param {string} flavorText - The flavor text from the roll
+ * @returns {Object|null} Weapon context or null
+ */
+const detectWeaponContext = (flavorText) => {
+  if (!flavorText) return null
+  
+  const speaker = ChatMessage.getSpeaker()
+  if (!speaker.actor) return null
+  
+  const actor = game.actors.get(speaker.actor)
+  if (!actor) return null
+  
+  // Look for weapon name in flavor text
+  const weapons = actor.items.filter(i => i.type === 'weapon')
+  for (const weapon of weapons) {
+    if (flavorText.toLowerCase().includes(weapon.name.toLowerCase())) {
+      return { weapon, name: weapon.name, id: weapon.id }
+    }
+  }
+  
+  // Check for weapon action keywords
+  if (flavorText.match(/\b(attack|parry|dodge)\b/i) && weapons.length > 0) {
+    return { weapon: weapons[0], name: weapons[0].name, id: weapons[0].id }
+  }
+  
+  return null
+}
+
+/**
+ * Auto-detect target from selected tokens
+ * @returns {Object|null} Target context or null
+ */
+const getTargetContext = () => {
+  const targets = Array.from(game.user.targets)
+  if (targets.length === 0) return null
+  
+  const target = targets[0]
+  if (!target.actor) return null
+  
+  const hitlocs = target.actor.items.filter(i => i.type === 'hitloc')
+  if (hitlocs.length === 0) return null
+  
+  return {
+    target: target,
+    actor: target.actor,
+    name: target.name || target.actor.name,
+    hitlocs: hitlocs
+  }
+}
+
+/**
+ * Calculate hit locations for all sets
+ * @param {Array} sets - The sets from the roll
+ * @param {Object} targetContext - Target context
+ * @returns {Object} Map of height -> location name
+ */
+const calculateHitLocations = (sets, targetContext) => {
+  const results = {}
+  
+  if (!targetContext || !targetContext.hitlocs) return results
+  
+  sets.forEach(set => {
+    const height = set.height
+    const location = targetContext.hitlocs.find(loc => 
+      height >= (loc.system.noStart || 0) && height <= (loc.system.noEnd || 0)
+    )
+    
+    results[height] = location ? (location.system.name || location.name) : "Miss"
+  })
+  
+  return results
+}
+
+/**
+ * Calculate weapon damages for all sets
+ * @param {Array} sets - The sets from the roll
+ * @param {Object} weaponContext - Weapon context
+ * @returns {Array} Array of damage strings
+ */
+const calculateWeaponDamages = (sets, weaponContext) => {
+  if (!weaponContext || !weaponContext.weapon) return []
+  
+  return sets.map((set, index) => {
+    const rollResult = { sets: [set], looseDice: [], masterDice: [] }
+    
+    try {
+      return weaponContext.weapon.getDamageString(rollResult) || "0 damage"
+    } catch (error) {
+      console.error('Error calculating weapon damage:', error)
+      return "Error"
+    }
+  })
 }
 
 /**
@@ -97,42 +247,37 @@ const rollFromChatMessageOreCommand = async (messageText, data) => {
     }
   }
   
-  console.log("Parsed values:", {diceCount, expertCount, difficulty, penalty, masterCount, expertValue});
-  
-  // Calculate final dice count after penalties for Dice So Nice
+  // Calculate final dice count after penalties
   let finalDiceCount = diceCount;
   let finalExpertCount = expertCount;
   let finalMasterCount = masterCount;
   let remainingPenalty = penalty;
   
-  // Apply penalty to master dice first
   if (finalMasterCount > 0 && remainingPenalty > 0) {
     const penaltyToMD = Math.min(remainingPenalty, finalMasterCount);
     finalMasterCount -= penaltyToMD;
     remainingPenalty -= penaltyToMD;
   }
   
-  // Then apply remaining penalty to expert dice
   if (finalExpertCount > 0 && remainingPenalty > 0) {
     const penaltyToED = Math.min(remainingPenalty, finalExpertCount);
     finalExpertCount -= penaltyToED;
     remainingPenalty -= penaltyToED;
   }
   
-  // Finally, apply remaining penalty to normal dice
   if (remainingPenalty > 0) {
     finalDiceCount = Math.max(0, finalDiceCount - remainingPenalty);
   }
   
-  // Create roll with final dice count for correct Dice So Nice animation
   const roll = createRawRoll(finalDiceCount);
   await roll.evaluate()
   
   const rollResult = await parseRawRoll(roll, finalExpertCount, expertValue, difficulty, 0, flavorText, finalMasterCount)
   data.content = await getContentFromRollResult(rollResult)
-  data.type = CONST.CHAT_MESSAGE_TYPES.OTHER
   data.rolls = [roll]
   data.flags = { core: { canPopout: true } }
+  
+  // Don't set style/type explicitly - let Foundry handle it
   return ChatMessage.create(data, {})
 }
 
@@ -145,10 +290,6 @@ const errorParsingOreCommand = (messageText) => {
   return null
 }
 
-/**
- * returns a Foundry Roll object.
- * @param {number} diceCount
- */
 const createRawRoll = (diceCount) => {
   return new Roll(`${diceCount}d10`);
 }
@@ -156,55 +297,68 @@ const createRawRoll = (diceCount) => {
 const parseRawRoll = async (roll, expertCount, expertValue, difficulty, penalty, flavorText, masterCount) => {
   const rawRolls = roll.dice[0] ? roll.dice[0].results.map(r => r.result) : [];
   
-  // Expert dice always show the expertValue, they don't roll
   let expertRolls = [];
   if (expertCount > 0) {
     expertRolls = new Array(parseInt(expertCount)).fill(parseInt(expertValue));
   }
   
-  const counts = new Array(11).fill(0)  // [0, 1, ..., 9, 10].  the 0 is not used
-  rawRolls.forEach(k => {
-    counts[k] += 1
-  })
-  expertRolls.forEach(k => {
-    counts[k] += 1
-  })
-  const sets = {}  // key = height, value = width
+  const counts = new Array(11).fill(0)
+  rawRolls.forEach(k => counts[k] += 1)
+  expertRolls.forEach(k => counts[k] += 1)
+  
+  const sets = {}
   const looseDice = []
   let masterDice = new Array(masterCount).fill(10)
   
   counts.forEach((count, num) => {
-    if (count === 0) return  // (will also skip the "0" count)
-    if (num < difficulty) return // drop dice lower than the difficulty
+    if (count === 0) return
+    if (num < difficulty) return
     if (count === 1) looseDice.push(num)
     if (count >= 2) sets[num] = count
   })
+
+  // Calculate sequences
+  const allDice = [...rawRolls, ...expertRolls, ...masterDice]
+  const sequences = calculateSequences(allDice)
+  
+  // Auto-detect contexts
+  const weaponContext = detectWeaponContext(flavorText)
+  const targetContext = getTargetContext()
+  
+  // Create sets array
+  const setsArray = Object.entries(sets)
+    .map(s => [parseInt(s[0], 10), s[1]])
+    .sort((s1, s2) => s2[1] - s1[1] || s2[0] - s1[0])
+    .map((s, index) => ({
+      width: s[1],
+      height: s[0],
+      rollsInSet: new Array(s[1]).fill(s[0]),
+      index: index
+    }))
+  
+  // Calculate results
+  const hitlocResults = calculateHitLocations(setsArray, targetContext)
+  
+  if (weaponContext) {
+    weaponContext.calculatedDamages = calculateWeaponDamages(setsArray, weaponContext)
+  }
   
   return {
-    rawRolls: rawRolls,
+    rawRolls,
     expertRolls,
     flavorText,
-    sets: Object.entries(sets)
-      .map(s => [parseInt(s[0], 10), s[1]])
-      .sort((s1, s2) => s1[0] - s2[0])
-      .map(s => ({
-        width: s[1],
-        height: s[0],
-        rollsInSet: new Array(s[1]).fill(s[0]),
-      })),
+    sets: setsArray,
     looseDice,
     masterDice,
+    sequences,
+    weaponContext,
+    targetContext,
+    hitlocResults
   }
 }
 
-/**
- * @param {ORERollResult} rollResult
- */
 const getContentFromRollResult = async (rollResult) => {
-  const { sets, looseDice, flavorText, masterDice } = rollResult
-  return await renderTemplate(`systems/oresystem/templates/ore-roll.html`, {
-    sets, looseDice, flavorText, masterDice,
-  })
+  return await renderTemplate(`systems/oresystem/templates/ore-roll.html`, rollResult)
 }
 
 export const ORE = {
@@ -212,6 +366,11 @@ export const ORE = {
   parseRawRoll,
   getContentFromRollResult,
   rollFromChatMessageOreCommand,
+  calculateSequences,
+  detectWeaponContext,
+  getTargetContext,
+  calculateHitLocations,
+  calculateWeaponDamages,
   hooks: {
     HOOK_CLICK_SET,
     HOOK_CLICK_LOOSE_DIE,
@@ -220,5 +379,5 @@ export const ORE = {
 
 Hooks.on('init', () => {
   game.oneRollEngine = ORE
-  console.log(`ORE | Initialized.`)
+  console.log(`ORE | Initialized with smart auto-detection.`)
 })

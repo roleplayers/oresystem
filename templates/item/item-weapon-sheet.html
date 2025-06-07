@@ -171,82 +171,169 @@
       </div>
     </div>
 
-    <!-- Damage Tab -->
-    <div class="tab damage" data-group="primary" data-tab="damage">
-      <div class="damage-sections">
-        
-        <!-- Main Damage -->
-        <div class="damage-section">
-          <h3><i class="fas fa-explosion"></i> Main Damage</h3>
-          <div class="grid grid-2col">
-            <div class="resource">
-              <label class="resource-label">Damage Formula</label>
-              <select name="system.damage.main.formula">
-                <option value="width" {{#ifCond system.damage.main.formula "==" "width"}}selected{{/ifCond}}>Width</option>
-                <option value="width+1" {{#ifCond system.damage.main.formula "==" "width+1"}}selected{{/ifCond}}>Width + 1</option>
-                <option value="width+2" {{#ifCond system.damage.main.formula "==" "width+2"}}selected{{/ifCond}}>Width + 2</option>
-                <option value="width+3" {{#ifCond system.damage.main.formula "==" "width+3"}}selected{{/ifCond}}>Width + 3</option>
-                <option value="1" {{#ifCond system.damage.main.formula "==" "1"}}selected{{/ifCond}}>1</option>
-                <option value="2" {{#ifCond system.damage.main.formula "==" "2"}}selected{{/ifCond}}>2</option>
-                <option value="3" {{#ifCond system.damage.main.formula "==" "3"}}selected{{/ifCond}}>3</option>
-                <option value="4" {{#ifCond system.damage.main.formula "==" "4"}}selected{{/ifCond}}>4</option>
-                <option value="5" {{#ifCond system.damage.main.formula "==" "5"}}selected{{/ifCond}}>5</option>
-              </select>
-            </div>
-            <div class="resource">
-              <label class="resource-label">Damage Type</label>
-              <select name="system.damage.main.type">
-                <option value="killing" {{#ifCond system.damage.main.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
-                <option value="shock" {{#ifCond system.damage.main.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
-                <option value="fire" {{#ifCond system.damage.main.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
-                <option value="cold" {{#ifCond system.damage.main.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
-                <option value="poison" {{#ifCond system.damage.main.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
-                <option value="acid" {{#ifCond system.damage.main.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
-                <option value="electric" {{#ifCond system.damage.main.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
-                <option value="psychic" {{#ifCond system.damage.main.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
-              </select>
-            </div>
+<!-- Damage Tab -->
+<div class="tab damage" data-group="primary" data-tab="damage">
+  <div class="damage-sections">
+    
+    <!-- Main Damage -->
+    <div class="damage-section">
+      <h3><i class="fas fa-explosion"></i> Main Damage</h3>
+      <div class="grid grid-4col">
+        <div class="resource">
+          <label class="resource-label">Base Formula</label>
+          <select name="system.damage.main.formula">
+            <option value="width" {{#ifCond system.damage.main.formula "==" "width"}}selected{{/ifCond}}>Width</option>
+            <option value="height" {{#ifCond system.damage.main.formula "==" "height"}}selected{{/ifCond}}>Height</option>
+            <option value="traitors" {{#ifCond system.damage.main.formula "==" "traitors"}}selected{{/ifCond}}>Traitors</option>
+            <option value="sequence_lower" {{#ifCond system.damage.main.formula "==" "sequence_lower"}}selected{{/ifCond}}>Sequence Lower</option>
+            <option value="sequence_higher" {{#ifCond system.damage.main.formula "==" "sequence_higher"}}selected{{/ifCond}}>Sequence Higher</option>
+            <option value="fixed" {{#ifCond system.damage.main.formula "==" "fixed"}}selected{{/ifCond}}>Fixed Value</option>
+          </select>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Modifier</label>
+          <input type="number" name="system.damage.main.modifier" value="{{system.damage.main.modifier}}" min="-10" max="10" step="1" placeholder="0"/>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Damage Type</label>
+          <select name="system.damage.main.type">
+            <option value="killing" {{#ifCond system.damage.main.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
+            <option value="shock" {{#ifCond system.damage.main.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
+            <option value="fire" {{#ifCond system.damage.main.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
+            <option value="cold" {{#ifCond system.damage.main.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
+            <option value="poison" {{#ifCond system.damage.main.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
+            <option value="acid" {{#ifCond system.damage.main.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
+            <option value="electric" {{#ifCond system.damage.main.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
+            <option value="psychic" {{#ifCond system.damage.main.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
+          </select>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Preview</label>
+          <div class="damage-preview">
+            <span class="preview-text">
+              {{system.damage.main.formula}}
+              {{#if system.damage.main.modifier}}
+                {{#if (gt system.damage.main.modifier 0)}}+{{system.damage.main.modifier}}{{else}}{{system.damage.main.modifier}}{{/if}}
+              {{/if}}
+              {{system.damage.main.type}}
+            </span>
           </div>
         </div>
-
-        <!-- Alt Damage -->
-        <div class="damage-section">
-          <h3><i class="fas fa-fire"></i> Alternative Damage</h3>
-          <div class="grid grid-2col">
-            <div class="resource">
-              <label class="resource-label">Damage Formula</label>
-              <select name="system.damage.alt.formula">
-                <option value="">None</option>
-                <option value="width" {{#ifCond system.damage.alt.formula "==" "width"}}selected{{/ifCond}}>Width</option>
-                <option value="width+1" {{#ifCond system.damage.alt.formula "==" "width+1"}}selected{{/ifCond}}>Width + 1</option>
-                <option value="width+2" {{#ifCond system.damage.alt.formula "==" "width+2"}}selected{{/ifCond}}>Width + 2</option>
-                <option value="width+3" {{#ifCond system.damage.alt.formula "==" "width+3"}}selected{{/ifCond}}>Width + 3</option>
-                <option value="1" {{#ifCond system.damage.alt.formula "==" "1"}}selected{{/ifCond}}>1</option>
-                <option value="2" {{#ifCond system.damage.alt.formula "==" "2"}}selected{{/ifCond}}>2</option>
-                <option value="3" {{#ifCond system.damage.alt.formula "==" "3"}}selected{{/ifCond}}>3</option>
-                <option value="4" {{#ifCond system.damage.alt.formula "==" "4"}}selected{{/ifCond}}>4</option>
-                <option value="5" {{#ifCond system.damage.alt.formula "==" "5"}}selected{{/ifCond}}>5</option>
-              </select>
-            </div>
-            <div class="resource">
-              <label class="resource-label">Damage Type</label>
-              <select name="system.damage.alt.type">
-                <option value="">None</option>
-                <option value="killing" {{#ifCond system.damage.alt.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
-                <option value="shock" {{#ifCond system.damage.alt.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
-                <option value="fire" {{#ifCond system.damage.alt.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
-                <option value="cold" {{#ifCond system.damage.alt.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
-                <option value="poison" {{#ifCond system.damage.alt.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
-                <option value="acid" {{#ifCond system.damage.alt.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
-                <option value="electric" {{#ifCond system.damage.alt.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
-                <option value="psychic" {{#ifCond system.damage.alt.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
+
+    <!-- Alt Damage -->
+    <div class="damage-section">
+      <h3><i class="fas fa-fire"></i> Alternative Damage</h3>
+      <div class="grid grid-4col">
+        <div class="resource">
+          <label class="resource-label">Base Formula</label>
+          <select name="system.damage.alt.formula">
+            <option value="">None</option>
+            <option value="width" {{#ifCond system.damage.alt.formula "==" "width"}}selected{{/ifCond}}>Width</option>
+            <option value="height" {{#ifCond system.damage.alt.formula "==" "height"}}selected{{/ifCond}}>Height</option>
+            <option value="traitors" {{#ifCond system.damage.alt.formula "==" "traitors"}}selected{{/ifCond}}>Traitors</option>
+            <option value="sequence_lower" {{#ifCond system.damage.alt.formula "==" "sequence_lower"}}selected{{/ifCond}}>Sequence Lower</option>
+            <option value="sequence_higher" {{#ifCond system.damage.alt.formula "==" "sequence_higher"}}selected{{/ifCond}}>Sequence Higher</option>
+            <option value="fixed" {{#ifCond system.damage.alt.formula "==" "fixed"}}selected{{/ifCond}}>Fixed Value</option>
+          </select>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Modifier</label>
+          <input type="number" name="system.damage.alt.modifier" value="{{system.damage.alt.modifier}}" min="-10" max="10" step="1" placeholder="0"/>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Damage Type</label>
+          <select name="system.damage.alt.type">
+            <option value="">None</option>
+            <option value="killing" {{#ifCond system.damage.alt.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
+            <option value="shock" {{#ifCond system.damage.alt.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
+            <option value="fire" {{#ifCond system.damage.alt.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
+            <option value="cold" {{#ifCond system.damage.alt.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
+            <option value="poison" {{#ifCond system.damage.alt.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
+            <option value="acid" {{#ifCond system.damage.alt.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
+            <option value="electric" {{#ifCond system.damage.alt.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
+            <option value="psychic" {{#ifCond system.damage.alt.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
+          </select>
+        </div>
+        <div class="resource">
+          <label class="resource-label">Preview</label>
+          <div class="damage-preview">
+            {{#if system.damage.alt.formula}}
+            <span class="preview-text">
+              {{system.damage.alt.formula}}
+              {{#if system.damage.alt.modifier}}
+                {{#if (gt system.damage.alt.modifier 0)}}+{{system.damage.alt.modifier}}{{else}}{{system.damage.alt.modifier}}{{/if}}
+              {{/if}}
+              {{system.damage.alt.type}}
+            </span>
+            {{else}}
+            <span class="preview-text empty">No alt damage</span>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Damage Effects -->
+    <div class="damage-section">
+      <h3><i class="fas fa-plus-circle"></i> Additional Effects</h3>
+      <div class="additional-damage-list">
+        {{#each system.damage.additional}}
+        <div class="additional-damage-item">
+          <div class="grid grid-5col">
+            <div class="resource">
+              <label class="resource-label">Formula</label>
+              <select name="system.damage.additional.{{@index}}.formula">
+                <option value="width" {{#ifCond this.formula "==" "width"}}selected{{/ifCond}}>Width</option>
+                <option value="height" {{#ifCond this.formula "==" "height"}}selected{{/ifCond}}>Height</option>
+                <option value="traitors" {{#ifCond this.formula "==" "traitors"}}selected{{/ifCond}}>Traitors</option>
+                <option value="sequence_lower" {{#ifCond this.formula "==" "sequence_lower"}}selected{{/ifCond}}>Sequence Lower</option>
+                <option value="sequence_higher" {{#ifCond this.formula "==" "sequence_higher"}}selected{{/ifCond}}>Sequence Higher</option>
+                <option value="fixed" {{#ifCond this.formula "==" "fixed"}}selected{{/ifCond}}>Fixed Value</option>
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Modifier</label>
+              <input type="number" name="system.damage.additional.{{@index}}.modifier" value="{{this.modifier}}" min="-10" max="10" step="1"/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Type</label>
+              <select name="system.damage.additional.{{@index}}.type">
+                <option value="killing" {{#ifCond this.type "==" "killing"}}selected{{/ifCond}}>Killing</option>
+                <option value="shock" {{#ifCond this.type "==" "shock"}}selected{{/ifCond}}>Shock</option>
+                <option value="fire" {{#ifCond this.type "==" "fire"}}selected{{/ifCond}}>Fire</option>
+                <option value="cold" {{#ifCond this.type "==" "cold"}}selected{{/ifCond}}>Cold</option>
+                <option value="poison" {{#ifCond this.type "==" "poison"}}selected{{/ifCond}}>Poison</option>
+                <option value="acid" {{#ifCond this.type "==" "acid"}}selected{{/ifCond}}>Acid</option>
+                <option value="electric" {{#ifCond this.type "==" "electric"}}selected{{/ifCond}}>Electric</option>
+                <option value="psychic" {{#ifCond this.type "==" "psychic"}}selected{{/ifCond}}>Psychic</option>
+              </select>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Condition</label>
+              <input type="text" name="system.damage.additional.{{@index}}.condition" value="{{this.condition}}" placeholder="when..."/>
+            </div>
+            <div class="resource">
+              <label class="resource-label">Actions</label>
+              <button type="button" class="delete-additional-damage" data-index="{{@index}}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        {{/each}}
+        
+        <div class="add-damage-controls">
+          <button type="button" class="add-additional-damage">
+            <i class="fas fa-plus"></i> Add Additional Damage
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
     <!-- Properties Tab -->
     <div class="tab properties" data-group="primary" data-tab="properties">
@@ -292,33 +379,62 @@
         </div>
         {{/ifCond}}
 
-        <!-- Quick Reference -->
-        <div class="property-section">
-          <h3><i class="fas fa-info-circle"></i> Quick Reference</h3>
-          <div class="weapon-summary">
-            <div class="summary-line">
-              <strong>Attack:</strong> 
-              {{#if system.attack.skill}}{{system.attack.skill}}{{else}}No Skill{{/if}}
-              {{#if system.attack.stat}} + {{system.attack.stat}}{{/if}}
-              {{#if system.attack.dicebonus}} (+{{system.attack.dicebonus}}d){{/if}}
-              {{#if system.attack.edbonus}} (+{{system.attack.edbonus}}e){{/if}}
-              {{#if system.attack.mdbonus}} (+{{system.attack.mdbonus}}m){{/if}}
-            </div>
-            <div class="summary-line">
-              <strong>Damage:</strong> 
-              {{system.damage.main.formula}} {{system.damage.main.type}}
-              {{#if system.damage.alt.formula}} + {{system.damage.alt.formula}} {{system.damage.alt.type}}{{/if}}
-            </div>
-            {{#if system.traits}}
-            <div class="summary-line">
-              <strong>Traits:</strong> {{join system.traits ', '}}
-            </div>
-            {{/if}}
-          </div>
-        </div>
-
-      </div>
+<!-- Quick Reference -->
+<div class="property-section">
+  <h3><i class="fas fa-info-circle"></i> Quick Reference</h3>
+  <div class="weapon-summary">
+    <div class="summary-line">
+      <strong>Attack:</strong> 
+      {{#if system.attack.skill}}{{system.attack.skill}}{{else}}No Skill{{/if}}
+      {{#if system.attack.stat}} + {{system.attack.stat}}{{/if}}
+      {{#if system.attack.dicebonus}} (+{{system.attack.dicebonus}}d){{/if}}
+      {{#if system.attack.edbonus}} (+{{system.attack.edbonus}}e){{/if}}
+      {{#if system.attack.mdbonus}} (+{{system.attack.mdbonus}}m){{/if}}
     </div>
+    <div class="summary-line">
+      <strong>Damage:</strong> 
+      {{system.damage.main.formula}}
+      {{#if system.damage.main.modifier}}
+        {{#if (gt system.damage.main.modifier 0)}}+{{system.damage.main.modifier}}{{else}}{{system.damage.main.modifier}}{{/if}}
+      {{/if}}
+      {{system.damage.main.type}}
+      {{#if system.damage.alt.formula}}
+        + {{system.damage.alt.formula}}
+        {{#if system.damage.alt.modifier}}
+          {{#if (gt system.damage.alt.modifier 0)}}+{{system.damage.alt.modifier}}{{else}}{{system.damage.alt.modifier}}{{/if}}
+        {{/if}}
+        {{system.damage.alt.type}}
+      {{/if}}
+    </div>
+    {{#if system.traits}}
+    <div class="summary-line">
+      <strong>Traits:</strong> {{join system.traits ', '}}
+    </div>
+    {{/if}}
+    {{#if system.damage.additional}}
+    {{#each system.damage.additional}}
+    <div class="summary-line additional-damage">
+      <strong>{{capitalize this.condition}}:</strong> 
+      {{this.formula}}
+      {{#if this.modifier}}
+        {{#if (gt this.modifier 0)}}+{{this.modifier}}{{else}}{{this.modifier}}{{/if}}
+      {{/if}}
+      {{this.type}}
+    </div>
+    {{/each}}
+    {{/if}}
+  </div>
+</div>
+
+<style>
+.summary-line.additional-damage {
+  font-size: 12px;
+  color: #666;
+  border-left: 3px solid #8b0000;
+  padding-left: 8px;
+  margin-left: 10px;
+}
+</style>
 
     <!-- Description Tab -->
     <div class="tab description" data-group="primary" data-tab="description">

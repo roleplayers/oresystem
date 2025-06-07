@@ -203,7 +203,7 @@ Handlebars.registerHelper('range', function(start, end, options) {
   return result;
 });
 
-// Helper condicional avançado
+// Helper condicional melhorado
 Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
   switch (operator) {
     case '==': return (v1 == v2) ? options.fn(this) : options.inverse(this);
@@ -348,5 +348,39 @@ Hooks.once("ready", async function() {
     console.log("ORE System | Stat migration complete");
   } catch (error) {
     console.error("ORE System | Migration error:", error);
+  }
+});
+
+// Adicione este helper na seção de Handlebars Helpers no oresystem.mjs:
+
+Handlebars.registerHelper('json', function(obj) {
+  return new Handlebars.SafeString(JSON.stringify(obj, null, 2));
+});
+
+// Helper para verificar se é maior que (já existe, mas garantindo)
+Handlebars.registerHelper('gt', function(a, b) {
+  return (parseInt(a) || 0) > (parseInt(b) || 0);
+});
+
+// Helper para juntar arrays (já existe, mas garantindo que funciona)
+Handlebars.registerHelper('join', function(array, separator) {
+  if (!Array.isArray(array)) {
+    return '';
+  }
+  return array.join(separator || ', ');
+});
+
+// Helper para capitalizar primeira letra (já existe, mas garantindo)
+Handlebars.registerHelper('capitalize', function(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
+
+// Helper para verificar se não é o último item
+Handlebars.registerHelper('unless', function(condition, options) {
+  if (!condition) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
   }
 });

@@ -58,7 +58,6 @@ export class ReignItem extends Item {
 
     let fakeData = {
       content: '',
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       rolls: [],
       flags: { core: { canPopout: true } }
     }
@@ -255,7 +254,6 @@ export class ReignItem extends Item {
     // Execute the roll
     let fakeData = {
       content: '',
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
       rolls: [],
       flags: { core: { canPopout: true } }
     };
@@ -412,5 +410,166 @@ export class ReignItem extends Item {
     const edSet = data.edSet || this.system.ed_set || 10;
 
     html.find('#totalDiceDisplay').text(`Total: ${finalDice}d ${finalED}e${edSet} ${finalMD}m`);
+  }
+
+  /**
+   * Calculate damage based on ORE roll results and weapon configuration
+   * @param {Object} rollResult - The ORE roll result containing sets and loose dice
+   * @param {string} damageType - 'main', 'alt', or additional damage object
+   * @returns {Object} Calculated damage with type and amount
+   */
+  calculateDamage(rollResult, damageType = 'main') {
+    if (this.type !== 'weapon') return null;
+
+    let damageConfig;
+    
+    if (typeof damageType === 'string') {
+      damageConfig = this.system.damage[damageType];
+    } else {
+      damageConfig = damageType; // Additional damage object
+    }
+
+    if (!damageConfig || !damageConfig.formula) return null;
+
+    const { sets, looseDice, masterDice } = rollResult;
+    let baseDamage = 0;
+
+    // Calculate base damage based on formula
+    switch (damageConfig.formula) {
+      case 'width':
+        if (sets && sets.length > 0) {
+          baseDamage = Math.max(...sets.map(s => s.width));
+        }
+        break;
+        
+      case 'height':
+        if (sets && sets.length > 0) {
+          baseDamage = Math.max(...sets.map(s => s.height));
+        }
+        break;
+        
+      case 'traitors':
+        // Count 1s in the roll (traitors in some ORE variants)
+        const allDice = [...(looseDice || []), ...(sets || []).flatMap(s => s.rollsInSet)];
+        baseDamage = allDice.filter(die => die === 1).length;
+        break;
+        
+      case 'sequence_lower':
+        // Lowest set height
+        if (sets && sets.length > 0) {
+          baseDamage = Math.min(...sets.map(s => s.height));
+        }
+        break;
+        
+      case 'sequence_higher':
+        // Highest set height (same as height, but explicit)
+        if (sets && sets.length > 0) {
+          baseDamage = Math.max(...sets.map(s => s.height));
+        }
+        break;
+        
+      case 'fixed':
+        // Use modifier as fixed damage
+        baseDamage = damageConfig.modifier || 0;
+        break;
+        
+      default:
+        // Try to parse as number for backward compatibility
+        const numericValue = parseInt(damageConfig.formula);
+        if (!isNaN(numericValue)) {
+          baseDamage = numericValue;
+        }
+        break;
+    }
+
+    // Apply modifier (unless formula is 'fixed')
+    if (damageConfig.formula !== 'fixed') {
+      baseDamage += (damageConfig.modifier || 0);
+    }
+
+    // Ensure minimum damage of 0
+    baseDamage = Math.max(0, baseDamage);
+
+    return {
+      amount: baseDamage,
+      type: damageConfig.type || 'killing',
+      formula: damageConfig.formula,
+      modifier: damageConfig.modifier,
+      condition: damageConfig.condition || null
+    };
+  }
+
+  /**
+   * Get formatted damage string for display
+   * @param {Object} rollResult - Optional roll result for actual calculation
+   * @returns {string} Formatted damage string
+   */
+  getDamageString(rollResult = null) {
+    if (this.type !== 'weapon') return '';
+
+    const damages = [];
+
+    // Main damage
+    if (rollResult) {
+      const mainDamage = this.calculateDamage(rollResult, 'main');
+      if (mainDamage && mainDamage.amount > 0) {
+        damages.push(`${mainDamage.amount} ${mainDamage.type}`);
+      }
+    } else {
+      // Preview mode
+      const main = this.system.damage.main;
+      if (main.formula) {
+        let damageStr = main.formula;
+        if (main.modifier && main.modifier !== 0) {
+          damageStr += (main.modifier > 0 ? '+' : '') + main.modifier;
+        }
+        damages.push(`${damageStr} ${main.type}`);
+      }
+    }
+
+    // Alt damage
+    if (rollResult) {
+      const altDamage = this.calculateDamage(rollResult, 'alt');
+      if (altDamage && altDamage.amount > 0) {
+        damages.push(`${altDamage.amount} ${altDamage.type}`);
+      }
+    } else {
+      // Preview mode
+      const alt = this.system.damage.alt;
+      if (alt.formula) {
+        let damageStr = alt.formula;
+        if (alt.modifier && alt.modifier !== 0) {
+          damageStr += (alt.modifier > 0 ? '+' : '') + alt.modifier;
+        }
+        damages.push(`${damageStr} ${alt.type}`);
+      }
+    }
+
+    // Additional damages
+    if (this.system.damage.additional && this.system.damage.additional.length > 0) {
+      for (const additionalDamage of this.system.damage.additional) {
+        if (rollResult) {
+          const damage = this.calculateDamage(rollResult, additionalDamage);
+          if (damage && damage.amount > 0) {
+            let str = `${damage.amount} ${damage.type}`;
+            if (damage.condition) str += ` (${damage.condition})`;
+            damages.push(str);
+          }
+        } else {
+          // Preview mode
+          if (additionalDamage.formula) {
+            let damageStr = additionalDamage.formula;
+            if (additionalDamage.modifier && additionalDamage.modifier !== 0) {
+              damageStr += (additionalDamage.modifier > 0 ? '+' : '') + additionalDamage.modifier;
+            }
+            let str = `${damageStr} ${additionalDamage.type}`;
+            if (additionalDamage.condition) str += ` (${additionalDamage.condition})`;
+            damages.push(str);
+          }
+        }
+      }
+    }
+
+    return damages.join(' + ');
   }
 }
